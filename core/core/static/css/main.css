@@ -1,0 +1,8 @@
+.dropdown-toggle-no-arrow::after {
+    display: none;
+}
+
+.navbar .img-profile {
+    width: 1.5rem;
+    height: 1.5rem;
+}
