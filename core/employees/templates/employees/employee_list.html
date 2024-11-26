@@ -2,7 +2,7 @@
 {% load static %} 
 {% block title %}Employee List{% endblock %} 
 {% block styles_bmain %}
-<link href="https://cdn.datatables.net/v/dt/dt-2.0.8/datatables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.css" rel="stylesheet">
 {% endblock %} 
 {% block styles %} 
 {% endblock %} 
@@ -34,8 +34,8 @@
                     <div class="card col-md">
                       <div
                         class="card-header collapsed"
-                        data-toggle="collapse"
-                        data-target="#collapseDF1"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF1"
                       >
                         <h5 class="mb-0">
                           <button type="button" class="btn btn-link">
@@ -78,8 +78,8 @@
                     <div class="card col-md">
                       <div
                         class="card-header collapsed"
-                        data-toggle="collapse"
-                        data-target="#collapseDF2"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF2"
                       >
                         <h5 class="mb-0">
                           <button type="button" class="btn btn-link">
@@ -91,27 +91,27 @@
                         <div class="card-body">
                           <input
                             type="checkbox"
-                            name="chkSpecialties"
-                            id="chkSpecialties-0"
+                            name="chkSpecialty"
+                            id="chkSpecialty-0"
                             value=""
                             class="btn-check"
                             customType="datatableFilter"
                           />
-                          <label class="btn btn-sm" for="chkSpecialties-0"
+                          <label class="btn btn-sm" for="chkSpecialty-0"
                             >ALL</label
                           >
                           {% for specialty in specialties %}
                           <input
                             type="checkbox"
-                            name="chkSpecialties"
-                            id="chkSpecialties-{{ forloop.counter }}"
+                            name="chkSpecialty"
+                            id="chkSpecialty-{{ forloop.counter }}"
                             value="{{ specialty.name }}"
                             class="btn-check"
                             customType="datatableFilter"
                           />
                           <label
                             class="btn btn-sm"
-                            for="chkSpecialties-{{ forloop.counter }}"
+                            for="chkSpecialty-{{ forloop.counter }}"
                             >{{ specialty.name }}</label
                           >
                           {% endfor %}
@@ -125,8 +125,8 @@
                     <div class="card col-md">
                       <div
                         class="card-header collapsed"
-                        data-toggle="collapse"
-                        data-target="#collapseDF3"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF3"
                       >
                         <h5 class="mb-0">
                           <button type="button" class="btn btn-link">
@@ -169,8 +169,8 @@
                     <div class="card col-md">
                       <div
                         class="card-header collapsed"
-                        data-toggle="collapse"
-                        data-target="#collapseDF4"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF4"
                       >
                         <h5 class="mb-0">
                           <button type="button" class="btn btn-link">
@@ -285,27 +285,32 @@
 
           </div> -->
 
-          <table id="employeeTable" class="display nowrap">
-            <thead>
-              <tr>
-                <th>Company ID</th>
-                <th>Start Date</th>
-                <th>Full Name</th>
-                <th>Position</th>
-                <th>Specialties</th>
-                <th>Level</th>
-                <th>Gender</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-responsive">
+            <table id="employeeTable" class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Company ID</th>
+                  <th>Start Date</th>
+                  <th>Last Name</th>
+                  <th>First Name</th>
+                  <th>Middle Name</th>
+                  <th>Position</th>
+                  <th>Specialties</th>
+                  <th>Level</th>
+                  <th>Gender</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
 
           <div>
             <div class="row">
               <div class="col"></div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -313,8 +318,10 @@
 </div>
 <!-- /.container-fluid -->
 
-{% endblock %} {% block scripts_bmain %}
-<script src="https://cdn.datatables.net/v/dt/dt-2.0.8/datatables.min.js"></script>
-{% endblock %} {% block scripts %}
+{% endblock %} 
+{% block scripts_bmain %}
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.js"></script>
+{% endblock %} 
+{% block scripts %}
 <script src="{% static 'js/employee_list.js' %}"></script>
 {% endblock %}

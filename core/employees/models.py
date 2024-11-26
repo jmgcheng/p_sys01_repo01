@@ -42,8 +42,8 @@ class EmployeeJobSpecialty(models.Model):
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_id = models.CharField(max_length=50, unique=True, default='NA')
-    contact = models.CharField(max_length=100, default='NA')
+    company_id = models.CharField(max_length=50, unique=True)
+    contact = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True)
     gender = models.CharField(max_length=10, choices=[
                               ('MALE', 'MALE'), ('FEMALE', 'FEMALE')])
@@ -59,5 +59,5 @@ class Employee(models.Model):
         EmployeeJob, on_delete=models.SET_NULL, null=True)
     position_level = models.ForeignKey(
         EmployeeJobLevel, on_delete=models.SET_NULL, null=True)
-    position_specialties = models.ForeignKey(
-        EmployeeJobSpecialty, on_delete=models.SET_NULL, null=True)
+    position_specialties = models.ManyToManyField(
+        EmployeeJobSpecialty, blank=True)
