@@ -6,3 +6,12 @@
     width: 1.5rem;
     height: 1.5rem;
 }
+
+#accordionDatatableFilter div[data-toggle="collapse"], #accordionHeadcountTables div[data-toggle="collapse"] {
+    cursor: pointer;
+    padding: 3px;
+}
+
+#accordionDatatableFilter .card-body {
+    padding: 7px;
+}

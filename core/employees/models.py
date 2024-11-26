@@ -45,7 +45,8 @@ class Employee(models.Model):
     company_id = models.CharField(max_length=50, unique=True, default='NA')
     contact = models.CharField(max_length=100, default='NA')
     middle_name = models.CharField(max_length=100, blank=True)
-    gender = models.CharField(max_length=10)
+    gender = models.CharField(max_length=10, choices=[
+                              ('MALE', 'MALE'), ('FEMALE', 'FEMALE')])
     birth_date = models.DateField(
         validators=[validate_age], blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)

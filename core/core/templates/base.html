@@ -68,7 +68,7 @@
                     </a>
                     <ul class="dropdown-menu">
                       {% if perms.employees.view_employee %}
-                        <li><a class="dropdown-item" href="#">List</a></li>
+                        <li><a class="dropdown-item" href="{% url 'employees:employee-list' %}">List</a></li>
                       {% endif %}
 
                       {% if perms.employees.view_employee and perms.employees.add_employee and perms.employees.change_employee %}

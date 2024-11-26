@@ -25,6 +25,8 @@ from users.forms import CustomLoginForm
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    path('employees/', include('employees.urls')),
+
     path('profile/', user_views.profile, name='profile'),
     path('profile/password/', user_views.change_password, name='change_password'),
 
