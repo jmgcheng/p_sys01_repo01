@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     # 'crispy_bootstrap4',
     'crispy_bootstrap5',
+    'management_commands',
+
     'pages',
     'users',
     'employees',
