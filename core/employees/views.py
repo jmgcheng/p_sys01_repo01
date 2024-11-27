@@ -43,6 +43,15 @@ class EmployeeCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('employees:employee-list')
 
 
+class EmployeeDetailView(LoginRequiredMixin, DetailView):
+    model = Employee
+    template_name = 'employees/employee_detail.html'
+
+
+class EmployeeUpdateView(LoginRequiredMixin, UpdateView):
+    pass
+
+
 @login_required
 def ajx_employee_list(request):
 
@@ -58,13 +67,6 @@ def ajx_employee_list(request):
 
     #
     employees = Employee.objects.all()
-
-    print(f'---------hermit1----------')
-    print(position_filter)
-    print(specialty_filter)
-    print(gender_filter)
-    print(employee_status_filter)
-    print(f'---------hermit1----------')
 
     if search_value:
         employees = employees.filter(
@@ -168,7 +170,7 @@ def ajx_employee_list(request):
 
         data.append({
 
-            'company_id': emp.company_id,
+            'company_id': f"<a href='/employees/{emp.id}/'>{emp.company_id}</a>",
             'start_date': emp.start_date,
             'last_name': emp.user.last_name,
             'first_name': emp.user.first_name,
@@ -180,10 +182,6 @@ def ajx_employee_list(request):
             'status': emp.status.name
 
         })
-
-    # print(f'---------hermit2----------')
-    # print(employees_page)
-    # print(f'---------hermit2----------')
 
     response = {
         'draw': draw,
