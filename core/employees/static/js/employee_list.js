@@ -71,6 +71,21 @@ $(document).ready(function() {
         table.draw();
     });
 
+    $('#resetFilters').on('click', function() {
+        $('form select').each(function(index) {
+            $(this).val('');
+        })
+        $('#employeeTable_filter input').val('');
+        $("input[type=radio][value='']").prop('checked', true);
+        $("input[type=checkbox][customType='datatableFilter']").prop('checked', false);
+        $('.collapse').collapse('hide');
+        table.page.len(25).draw();
+        table.order([0, 'asc']).draw();
+        table.search('').draw();
+        table.columns().search('');
+        table.draw();
+    });
+
     function getCheckedValues(name) {
         var values = [];
         $('input[name="' + name + '"]:checked').each(function() {
