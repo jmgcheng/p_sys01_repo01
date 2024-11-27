@@ -77,7 +77,7 @@ def ajx_employee_list(request):
             Q(gender__icontains=search_value) |
             Q(status__name__icontains=search_value)
 
-        )
+        ).distinct()
 
     if position_filter:
         employees = employees.filter(position__name__in=position_filter)
