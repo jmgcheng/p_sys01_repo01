@@ -70,8 +70,8 @@ def ajx_employee_list(request):
         employees = employees.filter(
 
             Q(company_id__icontains=search_value) |
-            # Q(last_name__icontains=search_value) |
-            # Q(first_name__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
             Q(middle_name__icontains=search_value) |
             Q(position__name__icontains=search_value) |
             Q(position_specialties__name__icontains=search_value) |
