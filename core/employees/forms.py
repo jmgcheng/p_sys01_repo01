@@ -112,3 +112,87 @@ class EmployeeCreationForm(forms.ModelForm):
             self.save_m2m()
 
         return employee
+
+
+class EmployeeUpdateForm(forms.ModelForm):
+    birth_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    first_name = forms.CharField(max_length=100, required=True)
+    last_name = forms.CharField(max_length=100, required=True)
+    gender = forms.ChoiceField(
+        choices=[('MALE', 'MALE'), ('FEMALE', 'FEMALE')])
+    email = forms.EmailField(required=True)
+    username = forms.CharField(max_length=150)
+
+    class Meta:
+        model = Employee
+        fields = [
+            'company_id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'gender',
+            'contact',
+            'birth_date',
+            'address',
+            'start_date',
+            'status',
+            'position',
+            'position_level',
+            'position_specialties',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance and self.instance.user:
+            self.fields['email'].initial = self.instance.user.email
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['username'].initial = self.instance.user.username
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exclude(pk=self.instance.user.pk).exists():
+            raise ValidationError("A user with that username already exists.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            if User.objects.filter(email=email).exclude(pk=self.instance.user.pk).exists():
+                raise ValidationError("A user with that email already exists.")
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        regular_date = cleaned_data.get('regular_date')
+        if not start_date:
+            raise ValidationError({'start_date': 'Start date is required.'})
+        if (regular_date and start_date) and (regular_date < start_date):
+            raise ValidationError(
+                {'regular_date': 'Regular date cannot be earlier than start date.'})
+        return cleaned_data
+
+    def clean_company_id(self):
+        return self.cleaned_data['company_id'].upper()
+
+    def save(self, commit=True):
+        employee = super().save(commit=False)
+        user = employee.user
+        user.username = self.cleaned_data['username']
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+
+        if commit:
+            user.save()
+            employee.save()
+            self.save_m2m()
+
+        return employee

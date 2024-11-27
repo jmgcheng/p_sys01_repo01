@@ -15,8 +15,8 @@ from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefe
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import StringAgg
 from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
-from employees.forms import EmployeeCreationForm
-# , EmployeeUpdateForm, GroupForm, UserGroupForm, PermissionForm, EmployeeExcelUploadForm
+from employees.forms import EmployeeCreationForm, EmployeeUpdateForm
+# GroupForm, UserGroupForm, PermissionForm, EmployeeExcelUploadForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 
@@ -49,7 +49,20 @@ class EmployeeDetailView(LoginRequiredMixin, DetailView):
 
 
 class EmployeeUpdateView(LoginRequiredMixin, UpdateView):
-    pass
+    model = Employee
+    form_class = EmployeeUpdateForm
+    template_name = 'employees/employee_form.html'
+    success_url = reverse_lazy('employees:employee-list')
+
+    def form_valid(self, form):
+        #
+        messages.success(self.request, 'Employee updated successfully.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        #
+        messages.warning(self.request, 'Please check errors below')
+        return super().form_invalid(form)
 
 
 @login_required
