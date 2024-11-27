@@ -17,16 +17,18 @@ class EmployeeCreationForm(forms.ModelForm):
     last_name = forms.CharField(max_length=100, required=True)
     gender = forms.ChoiceField(
         choices=[('MALE', 'MALE'), ('FEMALE', 'FEMALE')])
+    email = forms.EmailField(required=True)
 
     class Meta:
         model = Employee
         fields = [
             'company_id',
-            'contact',
+            'email',
             'first_name',
             'last_name',
             'middle_name',
             'gender',
+            'contact',
             'birth_date',
             'address',
             'status',
@@ -60,6 +62,12 @@ class EmployeeCreationForm(forms.ModelForm):
             raise ValidationError("A user with that username already exists.")
         return username
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("A user with that email already exists.")
+        return email
+
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
@@ -84,9 +92,11 @@ class EmployeeCreationForm(forms.ModelForm):
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         username = generate_username(first_name)
+        email = self.cleaned_data.get('email')
 
         user = User(
             username=username,
+            email=email,
             first_name=first_name,
             last_name=last_name
         )
