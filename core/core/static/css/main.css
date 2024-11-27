@@ -15,3 +15,7 @@
 #accordionDatatableFilter .card-body {
     padding: 7px;
 }
+
+table.dataTable th.dt-type-date, table.dataTable td.dt-type-date {
+    text-align: left;
+}

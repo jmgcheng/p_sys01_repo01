@@ -103,7 +103,7 @@ def ajx_employee_list(request):
 
     #
     employees = employees.select_related(
-        'status', 'position', 'position_level')
+        'status', 'position', 'position_level', 'user')
     employees = employees.prefetch_related('position_specialties')
 
     paginator = Paginator(employees, length)
@@ -115,18 +115,21 @@ def ajx_employee_list(request):
 
     for emp in employees_page:
 
+        specialties = ', '.join([specialty.name for specialty in emp.position_specialties.all(
+        )]) if emp.position_specialties else ''
+
         data.append({
 
             'company_id': emp.company_id,
-            'start_date': '',
-            'last_name': '',
-            'first_name': '',
-            'middle_name': '',
-            'position': '',
-            'specialties': '',
-            'level': '',
-            'gender': '',
-            'status': ''
+            'start_date': emp.start_date,
+            'last_name': emp.user.last_name,
+            'first_name': emp.user.first_name,
+            'middle_name': emp.middle_name,
+            'position': emp.position.name,
+            'specialties': specialties,
+            'level': emp.position_level.name,
+            'gender': emp.gender,
+            'status': emp.status.name
 
         })
 
