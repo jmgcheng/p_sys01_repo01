@@ -11,7 +11,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q, Count, F, Case, When, IntegerField
+from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefetch, TextField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import StringAgg
 from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
 from employees.forms import EmployeeCreationForm
 # , EmployeeUpdateForm, GroupForm, UserGroupForm, PermissionForm, EmployeeExcelUploadForm
@@ -95,11 +97,57 @@ def ajx_employee_list(request):
     #
     employees = employees.filter(user__is_active=True)
 
+    #
+    employees = employees.annotate(
+        specialties_agg=Coalesce(
+            StringAgg('position_specialties__name', ', ', distinct=True),
+            Value(''),
+            output_field=TextField()
+        )
+    )
+
     # Handle ordering
     order_column_index = int(request.GET.get('order[0][column]', 0))
     order_direction = request.GET.get('order[0][dir]', 'asc')
     order_column = request.GET.get(
         f'columns[{order_column_index}][data]', 'id')
+
+    if order_column == 'last_name':
+        order_column = 'user__last_name'
+        if order_direction == 'desc':
+            employees = employees.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            employees = employees.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'specialties':
+        order_column = 'specialties_agg'
+        if order_direction == 'desc':
+            employees = employees.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            employees = employees.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'first_name':
+        order_column = 'user__first_name'
+        if order_direction == 'desc':
+            employees = employees.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            employees = employees.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'level':
+        order_column = 'position_level'
+        if order_direction == 'desc':
+            employees = employees.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            employees = employees.order_by(
+                F(order_column).asc(nulls_last=True))
+    else:
+        if order_direction == 'desc':
+            order_column = f'-{order_column}'
+        employees = employees.order_by(order_column)
 
     #
     employees = employees.select_related(
