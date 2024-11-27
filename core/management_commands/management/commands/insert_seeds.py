@@ -12,6 +12,16 @@ class Command(BaseCommand):
                 #
                 ('seed_employees_employeestatus',
                  'seed_employees_employeestatus.xlsx'),
+                #
+                ('seed_employees_employeejoblevel',
+                 'seed_employees_employeejoblevel.xlsx'),
+                #
+                ('seed_employees_employeejob',
+                 'seed_employees_employeejob.xlsx'),
+                #
+                ('seed_employees_employeejobspecialty',
+                 'seed_employees_employeejobspecialty.xlsx'),
+
 
                 # ('insert_new_departments_departmentcategory',
                 #  'new_departments_departmentcategory.xlsx'),
