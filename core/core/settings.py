@@ -14,6 +14,7 @@ import os
 import sys
 from pathlib import Path
 from decouple import config
+from celery import Celery
 
 print(f"--- SYS01 settings.py START ---------------------------------------------------")
 
@@ -58,6 +59,8 @@ INSTALLED_APPS = [
     'pages',
     'users',
     'employees',
+
+    'django_celery_results',
 
 ]
 if DEBUG:
@@ -156,6 +159,17 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Celery settings
+if DOCKER_ENV:
+    CELERY_BROKER_URL = config(
+        'CELERY_BROKER_URL', default='amqp://guest:guest@rabbitmq:5672//')
+    CELERY_ACCEPT_CONTENT = ['json']
+    CELERY_TASK_SERIALIZER = 'json'
+    CELERY_RESULT_SERIALIZER = 'json'
+else:
+    CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_RESULT_BACKEND = 'django-db'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -178,6 +192,10 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: True,

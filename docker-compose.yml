@@ -1,0 +1,121 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_PSYS_NAME: ${DATABASE_PSYS_NAME}
+      DATABASE_PSYS_USER: ${DATABASE_PSYS_USER}
+      DATABASE_PSYS_PASSWORD: ${DATABASE_PSYS_PASSWORD}
+      DATABASE_PSYS_HOST: ${DATABASE_PSYS_HOST}
+      DATABASE_PSYS_PORT: ${DATABASE_PSYS_PORT}
+      DOCKER_ENV: "True"
+      DJANGO_SECRET_KEY_SYS01: ${DJANGO_SECRET_KEY_SYS01}
+      CELERY_BROKER_URL: "amqp://rabbitmq:5672//"
+    volumes:
+      - ./core:/app
+      - ./core/static:/app/static
+      - ./shscripts:/shscripts
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    # env_file:
+    #   - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+
+  db:
+    image: postgres:16.3
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      POSTGRES_DB: ${DATABASE_PSYS_NAME}
+      POSTGRES_USER: ${DATABASE_PSYS_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PSYS_PASSWORD}
+      POSTGRES_HOST: ${DATABASE_PSYS_HOST}
+      POSTGRES_PORT: ${DATABASE_PSYS_PORT}
+
+  nginx:
+    image: nginx:1.24
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/proxy_params:/etc/nginx/conf.d/proxy_params
+      - ./core/static:/app/static
+      - ./core/media:/app/media
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      - web
+
+  rabbitmq:
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_VHOST: "/"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      CELERY_BROKER_URL: "amqp://guest:guest@rabbitmq:5672//"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  celery:
+    # image: jmgcheng/p_sys01_repo01_web:latest
+    #
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile\
+    #
+    image: p_sys01_repo01-web # Use the locally built 'web' service image
+    #
+    command: /bin/sh -c "sleep 10 && celery -A core worker --loglevel=info -P threads"
+    restart: always
+    depends_on:
+      - web
+      - rabbitmq
+      - db
+    environment:
+      DATABASE_PSYS_NAME: ${DATABASE_PSYS_NAME}
+      DATABASE_PSYS_USER: ${DATABASE_PSYS_USER}
+      DATABASE_PSYS_PASSWORD: ${DATABASE_PSYS_PASSWORD}
+      DATABASE_PSYS_HOST: ${DATABASE_PSYS_HOST}
+      DATABASE_PSYS_PORT: ${DATABASE_PSYS_PORT}
+      DOCKER_ENV: "True"
+      DJANGO_SECRET_KEY_SYS01: ${DJANGO_SECRET_KEY_SYS01}
+      CELERY_BROKER_URL: "amqp://guest:guest@rabbitmq:5672//"
+    volumes:
+      - ./core:/app
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    entrypoint: []
+
+  flower:
+    image: mher/flower
+    restart: always
+    ports:
+      - "5555:5555"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      FLOWER_BASIC_AUTH: "user:password"
+      CELERY_BROKER_URL: "amqp://guest:guest@rabbitmq:5672//"
+    command: /bin/sh -c "sleep 30 && celery --broker=amqp://guest:guest@rabbitmq:5672// flower --port=5555"
+    depends_on:
+      - rabbitmq
+      - celery
+
+volumes:
+  postgres_data:

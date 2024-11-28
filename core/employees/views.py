@@ -190,7 +190,7 @@ def ajx_employee_list(request):
             'middle_name': emp.middle_name,
             'position': emp.position.name,
             'specialties': specialties,
-            'level': emp.position_level.name,
+            'level': emp.position_level.name if emp.position_level else '',
             'gender': emp.gender,
             'status': emp.status.name
 
