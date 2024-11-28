@@ -61,3 +61,6 @@ class Employee(models.Model):
         EmployeeJobLevel, on_delete=models.SET_NULL, null=True)
     position_specialties = models.ManyToManyField(
         EmployeeJobSpecialty, blank=True)
+
+    def __str__(self):
+        return self.company_id
