@@ -102,6 +102,10 @@ $(document).ready(function() {
         handleImport("/employees/ajx_import_insert_excel_employees_celery");  
     });
 
+    $('#import-update-employee-btn').click(function () {
+        handleImport("/employees/ajx_import_update_excel_employees_celery");    
+    });
+
     function getCheckedValues(name) {
         var values = [];
         $('input[name="' + name + '"]:checked').each(function() {

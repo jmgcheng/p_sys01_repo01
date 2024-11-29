@@ -16,7 +16,7 @@ from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import StringAgg
 from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
 from employees.forms import EmployeeCreationForm, EmployeeUpdateForm, EmployeeExcelUploadForm
-from employees.utils import insert_excel_employees, handle_uploaded_file
+from employees.utils import insert_excel_employees, update_excel_employees, handle_uploaded_file
 # GroupForm, UserGroupForm, PermissionForm
 from employees.tasks import import_employees_task
 from celery.result import AsyncResult
@@ -233,6 +233,26 @@ def ajx_import_insert_excel_employees_celery(request):
                 return JsonResponse({'status': 'error', 'message': f"EV30: {type(e)} | {str(e)}"})
 
     return JsonResponse({'status': 'error', 'message': 'EV03: Invalid request method.'})
+
+
+@login_required
+def ajx_import_update_excel_employees_celery(request):
+    #
+    if request.method == 'POST':
+        form = EmployeeExcelUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+            try:
+                file_path = handle_uploaded_file(file)
+                task = import_employees_task.delay(file_path, mode='UPDATE')
+
+                return JsonResponse({'status': 'started', 'task_id': task.id, 'message': f"Import Update Process TaskID {task.id} started. Please wait..."})
+            except FileNotFoundError:
+                return JsonResponse({'status': 'error', 'message': f"EV33: {str(FileNotFoundError)}. Check file or directory location"})
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f"EV32: {type(e)} | {str(e)}"})
+
+    return JsonResponse({'status': 'error', 'message': 'EV06: Invalid request method.'})
 
 
 @login_required

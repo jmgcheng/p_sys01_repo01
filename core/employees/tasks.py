@@ -2,8 +2,7 @@ import pandas as pd
 from celery import shared_task
 from celery.exceptions import SoftTimeLimitExceeded
 from django.core.management.base import CommandError
-from employees.utils import insert_excel_employees
-# , update_excel_employees
+from employees.utils import insert_excel_employees, update_excel_employees
 
 
 @shared_task()
@@ -17,7 +16,6 @@ def import_employees_task(file_path, mode='INSERT'):
     if mode == 'INSERT':
         insert_excel_employees(df)
     elif mode == 'UPDATE':
-        # return update_excel_employees(df)
-        pass
+        update_excel_employees(df)
     else:
         raise Exception("TE01: Mode expecting INSERT or UPDATE only.")

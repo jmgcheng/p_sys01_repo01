@@ -287,6 +287,106 @@ def insert_excel_employees(df):
     return True
 
 
+def update_excel_employees(df):
+
+    # First, verify and clean the input DataFrame
+    df = verify_excel_employees(df, 'UPDATE')
+
+    # Load foreign key references
+    foreign_keys = load_foreign_keys()
+
+    # Prepare lists for bulk updates
+    users_to_update = []
+    employees_to_update = []
+
+    try:
+        with transaction.atomic():
+            for _, row in df.iterrows():
+                try:
+                    # Fetch the existing Employee record by unique identifier
+                    employee = Employee.objects.select_related(
+                        'user').get(company_id=row['COMPANY ID'])
+
+                    # Update User information if necessary
+                    user = employee.user
+                    if 'EMAIL' in df.columns and pd.notnull(row['EMAIL']):
+                        user.email = row['EMAIL']
+                    if 'FIRST NAME' in df.columns and pd.notnull(row['FIRST NAME']):
+                        user.first_name = row['FIRST NAME']
+                    if 'LAST NAME' in df.columns and pd.notnull(row['LAST NAME']):
+                        user.last_name = row['LAST NAME']
+
+                    users_to_update.append(user)
+
+                    # Update Employee fields
+                    employee.contact = '' if pd.isna(
+                        row.get('CONTACT', None)) else row.get('CONTACT', None)
+                    employee.middle_name = '' if pd.isna(
+                        row.get('MIDDLE NAME', None)) else row.get('MIDDLE NAME', None)
+                    employee.gender = row['GENDER']
+                    employee.address = '' if pd.isna(
+                        row.get('ADDRESS', None)) else row.get('ADDRESS', None)
+                    employee.birth_date = parse_date(row.get('BIRTH DATE'))
+                    employee.start_date = parse_date(row.get('START DATE'))
+                    employee.status = foreign_keys['statuses'].get(
+                        row['STATUS'].upper())
+                    employee.position = foreign_keys['positions'].get(
+                        row['POSITION'].upper())
+                    employee.position_level = None if pd.isna(foreign_keys['levels'].get(
+                        row['POSITION LEVEL'], None)) else foreign_keys['levels'].get(row['POSITION LEVEL'].upper(), None)
+                    employee.regular_date = parse_date(row.get('REGULAR DATE'))
+                    employee.separation_date = parse_date(
+                        row.get('SEPARATION DATE'))
+
+                    employees_to_update.append(employee)
+
+                except ObjectDoesNotExist:
+                    # Handle the case where an employee does not exist, if needed
+                    continue
+
+            # Perform bulk update on Users and Employees
+            # Add other fields as needed
+            User.objects.bulk_update(users_to_update, [
+                'email',
+                'first_name',
+                'last_name'
+            ])
+            Employee.objects.bulk_update(employees_to_update, [
+                'contact',
+                'middle_name',
+                'gender',
+                'address',
+                'birth_date',
+                'start_date',
+                'status',
+                'position',
+                'position_level',
+                'regular_date',
+                'separation_date'
+            ])
+
+            # Update currencies for each employee
+            for employee in employees_to_update:
+                row = df[df['COMPANY ID'] == employee.company_id].iloc[0]
+                specialties = row.get('POSITION SPECIALTIES', '')
+
+                # Always clear existing specialties
+                employee.position_specialties.clear()
+
+                # If there are new specialties, add them
+                if pd.notna(specialties) and specialties.strip() != '':
+                    specialty_list = [specialty.strip()
+                                      for specialty in specialties.split(',')]
+                    employee.position_specialties.add(
+                        *EmployeeJobSpecialty.objects.filter(name__in=specialty_list))
+
+        return True
+
+    except Exception as e:
+        print(f"Error during update: {e}")
+        return False
+
+
 def handle_uploaded_file(f):
     file_path = os.path.join(settings.MEDIA_ROOT, 'uploads', f.name)
     with open(file_path, 'wb+') as destination:
