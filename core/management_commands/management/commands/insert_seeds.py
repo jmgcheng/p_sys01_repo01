@@ -25,41 +25,6 @@ class Command(BaseCommand):
                 ('seed_employees_employee',
                  'seed_employees_employee.xlsx'),
 
-
-                # ('insert_new_departments_departmentcategory',
-                #  'new_departments_departmentcategory.xlsx'),
-
-                # ('insert_new_currencies_currency',
-                #  'new_currencies_currency.xlsx'),
-
-                # ('insert_new_countries_country', 'new_countries_country.xlsx'),
-                # ('insert_new_countries_stateprovince',
-                #  'new_countries_stateprovince.xlsx'),
-                # ('insert_new_countries_citymunicipality',
-                #  'new_countries_citymunicipality.xlsx'),
-
-                # ('insert_new_offices_office', 'new_offices_office.xlsx'),
-                # ('insert_new_offices_officeroom', 'new_offices_officeroom.xlsx'),
-
-                # ('insert_new_business_codes_businesscodebrand',
-                #  'new_business_codes_businesscodebrand.xlsx'),
-
-                # ('insert_new_business_codes_businesscodeunit',
-                #  'new_business_codes_businesscodeunit.xlsx'),
-                # ('insert_new_business_codes_businesscode',
-                #  'new_business_codes_businesscode.xlsx'),
-
-                # ('insert_new_employees_employeejoblevel',
-                #  'new_employees_employeejoblevel.xlsx'),
-                # ('insert_new_employees_employeenationality',
-                #  'new_employees_employeenationality.xlsx'),
-                # ('insert_new_employees_employeeposition',
-                #  'new_employees_employeeposition.xlsx'),
-                # ('insert_new_employees_employeeseparationtype',
-                #  'new_employees_employeeseparationtype.xlsx'),
-                # ('insert_new_employees_employeestatus',
-                #  'new_employees_employeestatus.xlsx')
-
                 # Add more commands as needed
             ]
 

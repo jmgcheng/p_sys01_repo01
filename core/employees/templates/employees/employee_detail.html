@@ -85,82 +85,6 @@
                         {% endfor %}
                       </td>
                     </tr>
-
-
-                    <!-- 
-                    
-                    
-                    
-                    <tr>
-                      <th scope="row">Job Level:</th>
-                      <td>{{ object.job_level }}</td>
-                    </tr>
-                    
-
-
-
-
-
-
-
-
-
-
-
-                    <tr>
-                      <th scope="row">Username:</th>
-                      <td>{{ object.user.username }}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Email:</th>
-                      <td>{{ object.user.email }}</td>
-                    </tr>                 -->
-                    
-
-                    
-
-                    
-                    
-
-                    
-                    
-                    
-                    
-                    
-                    <!--
-                    <tr>
-                      <th scope="row">Currencies:</th>
-                      <td>
-                        {% for currency in object.currencies.all %}
-                          {{ currency.name }}
-                          {% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                      </td>
-                    </tr> 
-                    <tr>
-                      <th scope="row">Regular Date:</th>
-                      <td>{{ object.regular_date }}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Separation Date:</th>
-                      <td>{{ object.separation_date }}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Separation Type:</th>
-                      <td>{{ object.separation_type }}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">System Groups:</th>
-                      <td>
-                        {% for group in object.user.groups.all %}
-                          {{ group.name }}
-                          {% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                      </td>
-                    </tr> 
-                    -->
-
-
                   </table>
                 
                   <div class="text-right">
@@ -168,7 +92,6 @@
                     <a class="btn btn-info" href="{% url 'employees:employee-list' %}">Employee List</a>
                   </div>
                 
-
                 </div>
             </div>
         </div>

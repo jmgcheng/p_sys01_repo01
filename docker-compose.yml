@@ -78,7 +78,7 @@ services:
     #   context: .
     #   dockerfile: Dockerfile\
     #
-    image: p_sys01_repo01-web # Use the locally built 'web' service image
+    image: p_sys01_repo01-web:latest # Use the locally built 'web' service image
     #
     command: /bin/sh -c "sleep 10 && celery -A core worker --loglevel=info -P threads"
     restart: always

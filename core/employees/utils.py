@@ -23,14 +23,6 @@ def generate_username(name):
     random_digits = ''.join(random.choices(string.digits, k=5))
     return f"{first_word}_{random_digits}"
 
-# def validate_foreign_key(model, field_name, value):
-#     """Helper function to validate foreign key values."""
-#     try:
-#         return model.objects.get(**{f"{field_name}__iexact": value})
-#     except model.DoesNotExist:
-#         raise CommandError(f"The value '{value}' does not exist in {
-#                            model.__name__}.")
-
 
 def get_existing_names_case_insensitive(model, field_name, values):
     """
@@ -49,10 +41,12 @@ def should_be(mode, model, model_name, field_name, column_records):
         model, field_name, column_records)
 
     if mode.upper() == 'NOT EXISTING':
+        # eg. use for checking if values are already existing so we can safely insert new records
         if records_results:
             raise CommandError(f"The following {model_name}.{field_name} values already exist: {
                                ', '.join(records_results)}")
     elif mode.upper() == 'EXISTING':
+        # eg. use for checking if values are existing for updating records. Can also be used for checking if foreign key values do exist
         missing_records = set(column_records) - \
             {name.upper() for name in records_results}
 
@@ -73,6 +67,8 @@ def parse_date(date_str):
 
 
 def load_foreign_keys():
+    # just creating dictionaries here for easy access of values later
+
     statuses = {s.name.upper(): s for s in EmployeeStatus.objects.all()}
     positions = {p.name.upper(): p for p in EmployeeJob.objects.all()}
     levels = {l.name.upper(): l for l in EmployeeJobLevel.objects.all()}
@@ -183,13 +179,9 @@ def verify_excel_employees(df, mode='INSERT'):
             df[column] = df[column].str.strip().str.upper()
             df[column] = df[column].replace({'': None})
 
-            # print(f"hermit1-----------{df[column]}-------------hermit1")
-
             #
             column_records = df[column].unique()
             column_records = column_records[~pd.isnull(column_records)]
-
-            # print(f"hermit2-----------{column_records}-------------hermit2")
 
             if not pd.isna(column_records).any():
                 field_name = 'name'
@@ -214,8 +206,11 @@ def verify_excel_employees(df, mode='INSERT'):
 
 
 def insert_excel_employees(df):
+
+    # First, verify and clean the input DataFrame
     df = verify_excel_employees(df, 'INSERT')
 
+    # Load foreign key references
     foreign_keys = load_foreign_keys()
 
     # Insert new employees
@@ -263,7 +258,7 @@ def insert_excel_employees(df):
     # print(users)
     # print(f'-------hermit3---------')
     # print(f'-------hermit5---------')
-    # print(employees)
+    # print(employees) # your model should have def __str__(self) to easily see contents for debugging
     # print(f'-------hermit5---------')
 
     with transaction.atomic():
@@ -365,7 +360,7 @@ def update_excel_employees(df):
                 'separation_date'
             ])
 
-            # Update currencies for each employee
+            # Update specialties for each employee
             for employee in employees_to_update:
                 row = df[df['COMPANY ID'] == employee.company_id].iloc[0]
                 specialties = row.get('POSITION SPECIALTIES', '')

@@ -4,7 +4,7 @@ from employees.models import Employee, EmployeeJob, EmployeeJobLevel, EmployeeJo
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('user', 'start_date', 'regular_date', 'status')
-    # search_fields = ('fullname', )
+    search_fields = ('user', )
 
 
 admin.site.register(EmployeeStatus)
