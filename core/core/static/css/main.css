@@ -7,15 +7,28 @@
     height: 1.5rem;
 }
 
-#accordionDatatableFilter div[data-toggle="collapse"], #accordionHeadcountTables div[data-toggle="collapse"] {
+table.dataTable th.dt-type-date, table.dataTable td.dt-type-date {
+    text-align: left;
+}
+
+.btn-controls {
+    padding: 3px;
+    margin: 0 0 25px 0;
+}
+
+#accordionDatatableFilter div[data-bs-toggle="collapse"], #accordionHeadcountTables div[data-bs-toggle="collapse"] {
     cursor: pointer;
     padding: 3px;
 }
 
-#accordionDatatableFilter .card-body {
-    padding: 7px;
+#accordionDatatableFilter .accordion-button {
+    background: ghostwhite;
 }
 
-table.dataTable th.dt-type-date, table.dataTable td.dt-type-date {
-    text-align: left;
+#accordionDatatableFilter .accordion-button:not(.collapsed) {
+    background: lavender;
+}
+
+#accordionDatatableFilter .card-body {
+    padding: 7px;
 }

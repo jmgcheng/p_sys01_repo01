@@ -26,20 +26,20 @@
         <div class="card-body">
           <div>
             <form>
-              <div id="accordionDatatableFilter">
+              <div id="accordionDatatableFilter" class="mb-3">
 
 
-                  <div class="row">
+                  <div class="row accordion">
                     <!-- filter position -->
                     <div class="card col-md">
                       <div
-                        class="card-header collapsed"
+                        class="card-header accordion-button collapsed"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseDF1"
                       >
                         <h5 class="mb-0">
-                          <button type="button" class="btn btn-link">
-                            Filter by Position:
+                          <button type="button" class="btn">
+                            filter Position:
                           </button>
                         </h5>
                       </div>
@@ -77,13 +77,13 @@
                     <!-- filter specialties -->
                     <div class="card col-md">
                       <div
-                        class="card-header collapsed"
+                        class="card-header accordion-button collapsed"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseDF2"
                       >
                         <h5 class="mb-0">
-                          <button type="button" class="btn btn-link">
-                            Filter by Specialty:
+                          <button type="button" class="btn">
+                            filter Specialty:
                           </button>
                         </h5>
                       </div>
@@ -120,17 +120,17 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row accordion">
                     <!-- filter gender -->
                     <div class="card col-md">
                       <div
-                        class="card-header collapsed"
+                        class="card-header accordion-button collapsed"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseDF3"
                       >
                         <h5 class="mb-0">
-                          <button type="button" class="btn btn-link">
-                            Filter by Gender:
+                          <button type="button" class="btn">
+                            filter Gender:
                           </button>
                         </h5>
                       </div>
@@ -168,13 +168,13 @@
                     <!-- filter status -->
                     <div class="card col-md">
                       <div
-                        class="card-header collapsed"
+                        class="card-header  accordion-button collapsed"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseDF4"
                       >
                         <h5 class="mb-0">
-                          <button type="button" class="btn btn-link">
-                            Filter by Employee Status:
+                          <button type="button" class="btn">
+                            filter Employee Status:
                           </button>
                         </h5>
                       </div>
@@ -221,7 +221,7 @@
                     <div class="col">
                       <div class="form-group">
                         <br />
-                        <button type="button" class="btn btn-info" id="resetFilters">
+                        <button type="button" class="btn btn-sm btn-info" id="resetFilters">
                           Reset Filters
                         </button>
                       </div>
@@ -233,19 +233,48 @@
           </div>
 
           
-          <div class="isi-controls">
+          <div class="btn-controls">
             <h5>Export/Import Controls</h5>
 
             <div class="row">
+              <div class="col">
+                <script type="text/javascript">
+                  const csrfToken = "{{ csrf_token }}";
+                </script>
+                <button id="export-all-btn" class="btn btn-sm btn-primary">
+                  Export: All Employee Records
+                </button>
+                <button
+                  id="export-filtered-btn"
+                  class="btn btn-sm btn-primary"
+                >
+                  Export: All Employee Records by Filter
+                </button>
+                <button
+                  id="import-new-employee-btn"
+                  class="btn btn-sm btn-primary"
+                >
+                  Import Insert: New Employee Records
+                </button>
+                <button
+                  id="import-update-employee-btn"
+                  class="btn btn-sm btn-primary"
+                >
+                  Import Update: Existing Records
+                </button>
+              </div>
+            </div>
+
+            <!-- <div class="row">
               <div class="col-md py-2">
-                <button id="export-all-btn" class="btn btn-block btn-success">
+                <button id="export-all-btn" class="btn btn-success">
                   Export: All Employee Records
                 </button>
               </div>
               <div class="col-md py-2">
                 <button
                   id="export-filtered-btn"
-                  class="btn btn-block btn-success"
+                  class="btn btn-success"
                 >
                   Export: All Employee Records by Filter
                 </button>
@@ -259,7 +288,7 @@
               <div class="col-md py-2">
                 <button
                   id="import-new-employee-btn"
-                  class="btn btn-block btn-success"
+                  class="btn btn-success"
                 >
                   Import Insert: New Employee Records
                 </button>
@@ -267,12 +296,12 @@
               <div class="col-md py-2">
                 <button
                   id="import-update-employee-btn"
-                  class="btn btn-block btn-success"
+                  class="btn btn-success"
                 >
                   Import Update: Existing Records
                 </button>
               </div>
-            </div>
+            </div> -->
 
             <div class="row">
               <div class="col">
@@ -289,7 +318,7 @@
          
 
           <div class="table-responsive">
-            <table id="employeeTable" class="table table-sm">
+            <table id="employeeTable" class="table table-sm table-striped table-hover">
               <thead>
                 <tr>
                   <th>Company ID</th>

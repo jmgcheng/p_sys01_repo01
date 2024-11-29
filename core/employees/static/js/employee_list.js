@@ -45,12 +45,13 @@ $(document).ready(function() {
             // bottomStart: 'info',
             // bottomEnd: 'paging'
 
-            top2Start: 'pageLength',
-            topStart: 'info',
-            // top2End: 'paging',
-            topEnd: 'search',
-            bottomStart: 'info',
-            bottomEnd: 'paging',
+            // top2Start: 'pageLength',
+            topStart: 'search',
+            top2End: 'info',
+            topEnd: 'pageLength',
+
+            bottomStart: 'paging',
+            bottomEnd: 'info',
             // bottom2Start: 'info',
             // bottom2End: 'paging'
         },
