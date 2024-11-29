@@ -15,8 +15,11 @@ from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefe
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import StringAgg
 from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
-from employees.forms import EmployeeCreationForm, EmployeeUpdateForm
-# GroupForm, UserGroupForm, PermissionForm, EmployeeExcelUploadForm
+from employees.forms import EmployeeCreationForm, EmployeeUpdateForm, EmployeeExcelUploadForm
+from employees.utils import insert_excel_employees, handle_uploaded_file
+# GroupForm, UserGroupForm, PermissionForm
+from employees.tasks import import_employees_task
+from celery.result import AsyncResult
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 
@@ -204,3 +207,43 @@ def ajx_employee_list(request):
     }
 
     return JsonResponse(response)
+
+
+@login_required
+def ajx_import_insert_excel_employees_celery(request):
+    #
+    if request.method == 'POST':
+        form = EmployeeExcelUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+            try:
+                # upload the file first in our system so we can have a path
+                file_path = handle_uploaded_file(file)
+
+                # start import of data using celery
+                # this returns a task.id even if import_employees_task def has only pass. This means that we don't need to return anything from this def because .delay still returns a task even if there's none. It also doesn't matter if we return True or False to the function that we're calling
+                # return JsonResponse({'status': 'testing', 'message': f"task is {task} and task.id is {task.id}"})
+                task = import_employees_task.delay(file_path, mode='INSERT')
+
+                return JsonResponse({'status': 'started', 'task_id': task.id, 'message': f"Import Insert Process TaskID {task.id} started. Please wait..."})
+            except FileNotFoundError:
+                # mostly it goes here if media/uploads directory doesn't exist or handle_uploaded_file not able to upload the file correctly
+                return JsonResponse({'status': 'error', 'message': f"EV31: {str(FileNotFoundError)}. Check file or directory location"})
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f"EV30: {type(e)} | {str(e)}"})
+
+    return JsonResponse({'status': 'error', 'message': 'EV03: Invalid request method.'})
+
+
+@login_required
+def ajx_tasks_status(request, task_id):
+    # task.state might return PENDING, SUCCESS, or FAILURE
+    # FAILURE triggers when function called by .delay raise an error
+    task = AsyncResult(task_id)
+
+    return JsonResponse({
+        'status': task.state,
+        'task_id': task_id,
+        # task.result has value only when function called by .delay raise an error
+        'message': str(task.result),
+    })

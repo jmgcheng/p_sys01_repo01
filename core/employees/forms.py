@@ -196,3 +196,7 @@ class EmployeeUpdateForm(forms.ModelForm):
             self.save_m2m()
 
         return employee
+
+
+class EmployeeExcelUploadForm(forms.Form):
+    file = forms.FileField()

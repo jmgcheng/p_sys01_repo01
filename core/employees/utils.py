@@ -285,3 +285,11 @@ def insert_excel_employees(df):
                     *EmployeeJobSpecialty.objects.filter(name__in=specialty_list))
 
     return True
+
+
+def handle_uploaded_file(f):
+    file_path = os.path.join(settings.MEDIA_ROOT, 'uploads', f.name)
+    with open(file_path, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+    return file_path
