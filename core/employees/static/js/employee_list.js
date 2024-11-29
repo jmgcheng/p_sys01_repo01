@@ -98,6 +98,17 @@ $(document).ready(function() {
         table.draw();
     });
 
+    $('#export-all-btn').click(function () {
+        handleExport("/employees/ajx_export_excel_all_employees");
+    });
+
+    $('#export-filtered-btn').click(function () {
+        var searchParams = table.ajax.params();
+        var queryString = $.param(searchParams);
+
+        handleExport("/employees/ajx_export_excel_filtered_employees?" + queryString);
+    });
+
     $('#import-new-employee-btn').click(function () {
         handleImport("/employees/ajx_import_insert_excel_employees_celery");  
     });
@@ -120,6 +131,44 @@ $(document).ready(function() {
             return [...new Set(values)];  // Remove duplicates
         });
         return values;
+    }
+
+    function handleExport(url) {
+        $.ajax({
+            url: url,
+            method: 'GET',
+            beforeSend: function(xhr) {
+                disableControls();
+                $('#loader').show();
+                $('#message').hide();
+                $("#message").removeClass();
+            },
+            success: function (data) {
+                $('#loader').hide();
+                if (data.status === 'success') {
+                    let downloadLink = document.getElementById('download-link');
+                    downloadLink.href = '/media/' + data.filename; 
+                    downloadLink.download = data.filename; 
+                    downloadLink.click();
+                    $("#message").addClass("alert alert-success");
+                    $('#message').text('File generated and downloaded successfully.');
+                    $('#message').show().delay(5000).slideUp(500);
+                } else {
+                    $("#message").addClass("alert alert-warning");
+                    $('#message').text('An error occurred while generating the file.');
+                    $('#message').show();
+                }
+            },
+            error: function () {
+                $('#loader').hide();
+                $("#message").addClass("alert alert-warning");
+                $('#message').text('An error occurred while generating the file.');
+                $('#message').show();
+            },
+            complete: function() {
+                enableControls();
+            }
+        });
     }
 
     function handleImport(url) {

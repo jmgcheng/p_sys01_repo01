@@ -210,6 +210,148 @@ def ajx_employee_list(request):
 
 
 @login_required
+def ajx_export_excel_all_employees(request):
+
+    #
+    employees = Employee.objects.all()
+
+    #
+    employees = employees.filter(user__is_active=True)
+
+    #
+    employees = employees.select_related(
+        'status', 'position', 'position_level', 'user')
+    employees = employees.prefetch_related('position_specialties')
+
+    # Data to be exported
+    data = []
+    for employee in employees:
+        specialties = ', '.join([specialty.name for specialty in employee.position_specialties.all(
+        )]) if employee.position_specialties else ''
+
+        data.append({
+            'COMPANY ID': employee.company_id,
+            'FIRST NAME': employee.user.first_name,
+            'LAST NAME': employee.user.last_name,
+            'MIDDLE NAME': employee.middle_name,
+            'GENDER': employee.gender,
+            'EMAIL': employee.user.email,
+            'CONTACT': employee.contact,
+            'ADDRESS': employee.address,
+            'BIRTH DATE': employee.birth_date,
+            'START DATE': employee.start_date,
+            'STATUS': employee.status.name if employee.status else '',
+            'POSITION': employee.position.name if employee.position else '',
+            'POSITION LEVEL': employee.position_level.name if employee.position_level else '',
+            'POSITION SPECIALTIES': specialties,
+            'REGULAR DATE': employee.regular_date,
+            'SEPARATION DATE': employee.separation_date if employee.separation_date else '',
+        })
+
+    # Create a Pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Generate the Excel file
+    filename = f"employee_records_{
+        timezone.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    df.to_excel(os.path.join('media', filename), index=False)
+
+    return JsonResponse({'filename': filename, 'status': 'success'})
+
+
+@login_required
+def ajx_export_excel_filtered_employees(request):
+    #
+    search_value = request.GET.get('search[value]', '')
+    #
+    position_filter = request.GET.getlist('position[]', [])
+    specialty_filter = request.GET.getlist('specialty[]', [])
+    gender_filter = request.GET.getlist('gender[]', [])
+    employee_status_filter = request.GET.getlist('employee_status[]', [])
+
+    # Initial query with select_related for reducing the number of queries
+    employees = Employee.objects.select_related(
+        'status', 'position', 'position_level', 'user'
+    ).prefetch_related('position_specialties')
+
+    # Apply search filtering
+    if search_value:
+        employees = employees.filter(
+
+            Q(company_id__icontains=search_value) |
+            Q(user__last_name__icontains=search_value) |
+            Q(user__first_name__icontains=search_value) |
+            Q(middle_name__icontains=search_value) |
+            Q(position__name__icontains=search_value) |
+            Q(position_specialties__name__icontains=search_value) |
+            Q(position_level__name__icontains=search_value) |
+            Q(gender__icontains=search_value) |
+            Q(status__name__icontains=search_value)
+
+        ).distinct()
+
+    if position_filter:
+        employees = employees.filter(position__name__in=position_filter)
+
+    if specialty_filter:
+        employees = employees.filter(
+            position_specialties__name__in=specialty_filter)
+
+    if gender_filter:
+        employees = employees.filter(gender__in=gender_filter)
+
+    if employee_status_filter:
+        employees = employees.filter(status__name__in=employee_status_filter)
+
+    #
+    employees = employees.filter(user__is_active=True)
+
+    #
+    employees = employees.annotate(
+        specialties_agg=Coalesce(
+            StringAgg('position_specialties__name', ', ', distinct=True),
+            Value(''),
+            output_field=TextField()
+        )
+    )
+
+    # Data to be exported
+    data = []
+    for employee in employees:
+        specialties = ', '.join([specialty.name for specialty in employee.position_specialties.all(
+        )]) if employee.position_specialties else ''
+
+        data.append({
+            'COMPANY ID': employee.company_id,
+            'FIRST NAME': employee.user.first_name,
+            'LAST NAME': employee.user.last_name,
+            'MIDDLE NAME': employee.middle_name,
+            'GENDER': employee.gender,
+            'EMAIL': employee.user.email,
+            'CONTACT': employee.contact,
+            'ADDRESS': employee.address,
+            'BIRTH DATE': employee.birth_date,
+            'START DATE': employee.start_date,
+            'STATUS': employee.status.name if employee.status else '',
+            'POSITION': employee.position.name if employee.position else '',
+            'POSITION LEVEL': employee.position_level.name if employee.position_level else '',
+            'POSITION SPECIALTIES': specialties,
+            'REGULAR DATE': employee.regular_date,
+            'SEPARATION DATE': employee.separation_date if employee.separation_date else '',
+        })
+
+    # Create a Pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Generate the Excel file
+    filename = f"filtered_employee_records_{
+        timezone.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    df.to_excel(os.path.join('media', filename), index=False)
+
+    return JsonResponse({'filename': filename, 'status': 'success'})
+
+
+@login_required
 def ajx_import_insert_excel_employees_celery(request):
     #
     if request.method == 'POST':
