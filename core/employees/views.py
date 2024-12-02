@@ -113,7 +113,8 @@ def ajx_employee_list(request):
         employees = employees.filter(status__name__in=employee_status_filter)
 
     #
-    employees = employees.filter(user__is_active=True)
+    employees = employees.filter(
+        user__is_active=True, user__is_superuser=False)
 
     #
     employees = employees.annotate(
@@ -180,7 +181,6 @@ def ajx_employee_list(request):
     data = []
 
     for emp in employees_page:
-
         specialties = ', '.join([specialty.name for specialty in emp.position_specialties.all(
         )]) if emp.position_specialties else ''
 
@@ -191,11 +191,11 @@ def ajx_employee_list(request):
             'last_name': emp.user.last_name,
             'first_name': emp.user.first_name,
             'middle_name': emp.middle_name,
-            'position': emp.position.name,
+            'position': emp.position.name if emp.position else '',
             'specialties': specialties,
             'level': emp.position_level.name if emp.position_level else '',
             'gender': emp.gender,
-            'status': emp.status.name
+            'status': emp.status.name if emp.status else ''
 
         })
 
@@ -216,7 +216,8 @@ def ajx_export_excel_all_employees(request):
     employees = Employee.objects.all()
 
     #
-    employees = employees.filter(user__is_active=True)
+    employees = employees.filter(
+        user__is_active=True, user__is_superuser=False)
 
     #
     employees = employees.select_related(
@@ -304,7 +305,8 @@ def ajx_export_excel_filtered_employees(request):
         employees = employees.filter(status__name__in=employee_status_filter)
 
     #
-    employees = employees.filter(user__is_active=True)
+    employees = employees.filter(
+        user__is_active=True, user__is_superuser=False)
 
     #
     employees = employees.annotate(
