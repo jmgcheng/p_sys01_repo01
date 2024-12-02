@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'employees',
 
     'django_celery_results',
-
+    'dbbackup',
 ]
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
@@ -202,6 +202,10 @@ DEBUG_TOOLBAR_CONFIG = {
     'ENABLE_STACKTRACES': True,
     'INTERCEPT_REDIRECTS': False,
 }
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': 'backup/'}
+DBBACKUP_COMPRESS = False
 
 # default is 1k. Increased to 3k to cater viewing tables with 365 days columns for datatables
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 3000
