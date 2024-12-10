@@ -56,9 +56,13 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'management_commands',
 
+    'commons',
+
     'pages',
     'users',
     'employees',
+
+    'products',
 
     'django_celery_results',
     'dbbackup',

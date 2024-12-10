@@ -25,6 +25,22 @@ class Command(BaseCommand):
                 ('seed_employees_employee',
                  'seed_employees_employee.xlsx'),
 
+                #
+                ('seed_products_productcolor',
+                 'seed_products_productcolor.xlsx'),
+                #
+                ('seed_products_productsize',
+                 'seed_products_productsize.xlsx'),
+                #
+                ('seed_products_productunit',
+                 'seed_products_productunit.xlsx'),
+                #
+                ('seed_products_product',
+                 'seed_products_product.xlsx'),
+                #
+                ('seed_products_productvariation',
+                 'seed_products_productvariation.xlsx'),
+
                 # Add more commands as needed
             ]
 
