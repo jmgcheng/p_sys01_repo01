@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
 # from django.contrib.auth.models import Group, Permission, User
 # from django.contrib.postgres.aggregates import ArrayAgg
-# from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefetch, TextField
+from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefetch, TextField
 # from django.db.models.functions import Coalesce
 # from django.contrib.postgres.aggregates import StringAgg
 # from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
