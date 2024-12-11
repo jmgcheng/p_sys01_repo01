@@ -79,9 +79,16 @@
                   </li>
                   {% endif %}
 
-                  
-
-                  
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Inventory
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'products:product-list' %}">Products</a></li>
+                        <li><a class="dropdown-item" href="{% url 'products:product-variation-list' %}">Product Variations</a></li>
+                    </ul>
+                  </li>
+  
                 </ul>
 
                 <ul class="navbar-nav">
