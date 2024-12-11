@@ -24,6 +24,11 @@ from products.models import ProductColor, ProductSize, ProductUnit, Product, Pro
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 
+class ProductListView(LoginRequiredMixin, ListView):
+    model = Product
+    template_name = 'products/product_list.html'
+
+
 class ProductVariationListView(LoginRequiredMixin, ListView):
     model = ProductVariation
     template_name = 'products/product_variation_list.html'
@@ -37,6 +42,56 @@ class ProductVariationListView(LoginRequiredMixin, ListView):
         context['products'] = Product.objects.all()
 
         return context
+
+
+@login_required
+def ajx_product_list(request):
+
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '')
+
+    #
+    products = Product.objects.all()
+
+    if search_value:
+        products = products.filter(
+            Q(code__icontains=search_value) |
+            Q(name__icontains=search_value)
+        ).distinct()
+
+    # Handle ordering
+    order_column_index = int(request.GET.get('order[0][column]', 0))
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+    order_column = request.GET.get(
+        f'columns[{order_column_index}][data]', 'id')
+
+    if order_direction == 'desc':
+        order_column = f'-{order_column}'
+    products = products.order_by(order_column)
+
+    paginator = Paginator(products, length)
+    total_records = paginator.count
+    products_page = paginator.get_page(start // length + 1)
+
+    #
+    data = []
+
+    for p in products_page:
+        data.append({
+            'code': f"<a href='/products/{p.id}/'>{p.code}</a>",
+            'name': p.name,
+        })
+
+    response = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': total_records,
+        'data': data
+    }
+
+    return JsonResponse(response)
 
 
 @login_required
@@ -87,43 +142,6 @@ def ajx_product_variation_list(request):
     order_column = request.GET.get(
         f'columns[{order_column_index}][data]', 'id')
 
-    # if order_column == 'last_name':
-    #     order_column = 'user__last_name'
-    #     if order_direction == 'desc':
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).desc(nulls_last=True))
-    #     else:
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).asc(nulls_last=True))
-    # elif order_column == 'specialties':
-    #     order_column = 'specialties_agg'
-    #     if order_direction == 'desc':
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).desc(nulls_last=True))
-    #     else:
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).asc(nulls_last=True))
-    # elif order_column == 'first_name':
-    #     order_column = 'user__first_name'
-    #     if order_direction == 'desc':
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).desc(nulls_last=True))
-    #     else:
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).asc(nulls_last=True))
-    # elif order_column == 'level':
-    #     order_column = 'position_level'
-    #     if order_direction == 'desc':
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).desc(nulls_last=True))
-    #     else:
-    #         product_variations = product_variations.order_by(
-    #             F(order_column).asc(nulls_last=True))
-    # else:
-    #     if order_direction == 'desc':
-    #         order_column = f'-{order_column}'
-    #     product_variations = product_variations.order_by(order_column)
-
     if order_direction == 'desc':
         order_column = f'-{order_column}'
     product_variations = product_variations.order_by(order_column)
@@ -131,7 +149,6 @@ def ajx_product_variation_list(request):
     #
     product_variations = product_variations.select_related(
         'product', 'unit', 'size', 'color')
-    # product_variations = product_variations.prefetch_related('position_specialties')
 
     paginator = Paginator(product_variations, length)
     total_records = paginator.count
