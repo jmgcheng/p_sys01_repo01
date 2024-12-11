@@ -86,6 +86,24 @@ class ProductVariationDetailView(LoginRequiredMixin, DetailView):
     template_name = 'products/product_variation_detail.html'
 
 
+class ProductVariationUpdateView(LoginRequiredMixin, UpdateView):
+    model = ProductVariation
+    form_class = ProductVariationForm
+    template_name = 'products/product_variation_form.html'
+    success_url = reverse_lazy('products:product-variation-list')
+
+    def form_valid(self, form):
+        #
+        messages.success(
+            self.request, 'Product Variation updated successfully.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        #
+        messages.warning(self.request, 'Please check errors below')
+        return super().form_invalid(form)
+
+
 @login_required
 def ajx_product_list(request):
 
