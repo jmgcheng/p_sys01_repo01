@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('employees/', include('employees.urls')),
+    path('products/', include('products.urls')),
 
     path('profile/', user_views.profile, name='profile'),
     path('profile/password/', user_views.change_password, name='change_password'),

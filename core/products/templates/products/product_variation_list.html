@@ -1,0 +1,264 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block title %}Employee List{% endblock %} 
+{% block styles_bmain %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.css" rel="stylesheet">
+{% endblock %} 
+{% block styles %} 
+{% endblock %} 
+{% block content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Product Variations</h1>
+  </div>
+
+  <!-- Content Row -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Product Variation - List</h6>
+        </div>
+
+        <div class="card-body">
+          <div>
+            <form>
+              <div id="accordionDatatableFilter" class="mb-3">
+
+
+                  <div class="row accordion">
+                    <!-- filter product -->
+                    <div class="card col-md">
+                      <div
+                        class="card-header accordion-button collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF1"
+                      >
+                        <h5 class="mb-0">
+                          <button type="button" class="btn">
+                            filter Product:
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseDF1" class="collapse">
+                        <div class="card-body">
+                          <input
+                            type="checkbox"
+                            name="chkProduct"
+                            id="chkProduct-0"
+                            value=""
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label class="btn btn-sm" for="chkProduct-0"
+                            >ALL</label
+                          >
+                          {% for product in products %}
+                          <input
+                            type="checkbox"
+                            name="chkProduct"
+                            id="chkProduct-{{ forloop.counter }}"
+                            value="{{ product.name }}"
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label
+                            class="btn btn-sm"
+                            for="chkProduct-{{ forloop.counter }}"
+                            >{{ product.name }}</label
+                          >
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                    <!-- filter unit -->
+                    <div class="card col-md">
+                      <div
+                        class="card-header accordion-button collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF2"
+                      >
+                        <h5 class="mb-0">
+                          <button type="button" class="btn">
+                            filter Unit:
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseDF2" class="collapse">
+                        <div class="card-body">
+                          <input
+                            type="checkbox"
+                            name="chkUnit"
+                            id="chkUnit-0"
+                            value=""
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label class="btn btn-sm" for="chkUnit-0"
+                            >ALL</label
+                          >
+                          {% for unit in units %}
+                          <input
+                            type="checkbox"
+                            name="chkUnit"
+                            id="chkUnit-{{ forloop.counter }}"
+                            value="{{ unit.name }}"
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label
+                            class="btn btn-sm"
+                            for="chkUnit-{{ forloop.counter }}"
+                            >{{ unit.name }}</label
+                          >
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row accordion">
+                    <!-- filter size -->
+                    <div class="card col-md">
+                      <div
+                        class="card-header accordion-button collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF3"
+                      >
+                        <h5 class="mb-0">
+                          <button type="button" class="btn">
+                            filter Size:
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseDF3" class="collapse">
+                        <div class="card-body">
+                          <input
+                            type="checkbox"
+                            name="chkSize"
+                            id="chkSize-0"
+                            value=""
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label class="btn btn-sm" for="chkSize-0"
+                            >ALL</label
+                          >
+                          {% for size in sizes %}
+                          <input
+                            type="checkbox"
+                            name="chkSize"
+                            id="chkSize-{{ forloop.counter }}"
+                            value="{{ size.name }}"
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label
+                            class="btn btn-sm"
+                            for="chkSize-{{ forloop.counter }}"
+                            >{{ size.name }}</label
+                          >
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                    <!-- filter color -->
+                    <div class="card col-md">
+                      <div
+                        class="card-header accordion-button collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDF4"
+                      >
+                        <h5 class="mb-0">
+                          <button type="button" class="btn">
+                            filter Color:
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseDF4" class="collapse">
+                        <div class="card-body">
+                          <input
+                            type="checkbox"
+                            name="chkColor"
+                            id="chkColor-0"
+                            value=""
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label class="btn btn-sm" for="chkColor-0"
+                            >ALL</label
+                          >
+                          {% for color in colors %}
+                          <input
+                            type="checkbox"
+                            name="chkColor"
+                            id="chkColor-{{ forloop.counter }}"
+                            value="{{ color.name }}"
+                            class="btn-check"
+                            customType="datatableFilter"
+                          />
+                          <label
+                            class="btn btn-sm"
+                            for="chkColor-{{ forloop.counter }}"
+                            >{{ color.name }}</label
+                          >
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <br />
+                        <button type="button" class="btn btn-sm btn-info" id="resetFilters">
+                          Reset Filters
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
+            </form>
+          </div>
+
+          <div class="table-responsive">
+            <table id="dataTable" class="table table-sm table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Product Variation Code</th>
+                  <th>Name</th>
+                  <th>Size</th>
+                  <th>Unit</th>
+                  <th>Color</th>
+                  <th>Product</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="row">
+              <div class="col"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %} 
+{% block scripts_bmain %}
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.js"></script>
+{% endblock %} 
+{% block scripts %}
+<script src="{% static 'js/product_variation_list.js' %}"></script>
+{% endblock %}
