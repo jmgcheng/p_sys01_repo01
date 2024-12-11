@@ -12,3 +12,12 @@
 - check - requirements.txt
 - check - db backup working
 - check - cleanup - code
+
+## milestone - nn - milestone check - 12112024
+
+- check - crud product
+- check - crud product variation
+- check - bulk insert product and product variation
+- check - product list - datatable
+- check - product variation - datatable
+- check - cleanup - code

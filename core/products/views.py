@@ -9,19 +9,11 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
-# from django.contrib.auth.models import Group, Permission, User
-# from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefetch, TextField
 # from django.db.models.functions import Coalesce
 # from django.contrib.postgres.aggregates import StringAgg
-# from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
 from products.models import ProductColor, ProductSize, ProductUnit, Product, ProductVariation
-# from employees.forms import EmployeeCreationForm, EmployeeUpdateForm, EmployeeExcelUploadForm
 from products.forms import ProductForm, ProductVariationForm
-# from employees.utils import insert_excel_employees, update_excel_employees, handle_uploaded_file
-# # GroupForm, UserGroupForm, PermissionForm
-# from employees.tasks import import_employees_task
-# from celery.result import AsyncResult
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 
