@@ -17,7 +17,7 @@ from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefe
 # from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
 from products.models import ProductColor, ProductSize, ProductUnit, Product, ProductVariation
 # from employees.forms import EmployeeCreationForm, EmployeeUpdateForm, EmployeeExcelUploadForm
-from products.forms import ProductForm
+from products.forms import ProductForm, ProductVariationForm
 # from employees.utils import insert_excel_employees, update_excel_employees, handle_uploaded_file
 # # GroupForm, UserGroupForm, PermissionForm
 # from employees.tasks import import_employees_task
@@ -72,6 +72,18 @@ class ProductVariationListView(LoginRequiredMixin, ListView):
         context['products'] = Product.objects.all()
 
         return context
+
+
+class ProductVariationCreateView(LoginRequiredMixin, CreateView):
+    model = ProductVariation
+    form_class = ProductVariationForm
+    template_name = 'products/product_variation_form.html'
+    success_url = reverse_lazy('products:product-variation-list')
+
+
+class ProductVariationDetailView(LoginRequiredMixin, DetailView):
+    model = ProductVariation
+    template_name = 'products/product_variation_detail.html'
 
 
 @login_required

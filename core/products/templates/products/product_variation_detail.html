@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Product Variation Detail{% endblock %}
+{% block content %}
+
+
+
+  <div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Product Variation</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <div class="col-xl-6 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Product Variation Details</h6>
+                </div>
+                <div class="card-body">
+                  <table class="table table-hover table-bordered">
+                    <tr>
+                      <th class="col-3" scope="row">Code:</th>
+                      <td>{{object.code}}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Product:</th>
+                      <td>{{object.product.name}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Name:</th>
+                      <td>{{ object.name }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Excerpt:</th>
+                      <td>{{ object.excerpt }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Description:</th>
+                      <td>{{ object.description }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Unit:</th>
+                      <td>{{object.unit}}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Size:</th>
+                      <td>{{object.Size}}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Color:</th>
+                      <td>{{object.color}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Image Url:</th>
+                      <td>{{ object.image_url }}</td>
+                    </tr>
+                  </table>
+                
+                  <div class="text-right">
+                    <a class="btn btn-info" href="#">Edit Product Variation</a> 
+                    <a class="btn btn-info" href="{% url 'products:product-variation-list' %}">Product Variation List</a>
+                  </div>
+                
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Future Section</h6>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique omnis exercitationem adipisci eos modi, dignissimos aut expedita, mollitia delectus nam ut repellendus a? Modi, laboriosam deleniti placeat iure deserunt molestias.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+  
+{% endblock %}
