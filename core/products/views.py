@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect, reverse
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
-# from django.urls import reverse_lazy
+from django.urls import reverse_lazy
 # from django.utils import timezone
 # # from django.utils.decorators import method_decorator
 # from django.contrib import messages
@@ -17,11 +17,19 @@ from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefe
 # from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
 from products.models import ProductColor, ProductSize, ProductUnit, Product, ProductVariation
 # from employees.forms import EmployeeCreationForm, EmployeeUpdateForm, EmployeeExcelUploadForm
+from products.forms import ProductForm
 # from employees.utils import insert_excel_employees, update_excel_employees, handle_uploaded_file
 # # GroupForm, UserGroupForm, PermissionForm
 # from employees.tasks import import_employees_task
 # from celery.result import AsyncResult
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+
+
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+    success_url = reverse_lazy('products:product-list')
 
 
 class ProductListView(LoginRequiredMixin, ListView):

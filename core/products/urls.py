@@ -1,10 +1,10 @@
 from django.urls import path
-from products.views import ProductListView, ProductVariationListView, ajx_product_list, ajx_product_variation_list
+from products.views import ProductCreateView, ProductListView, ProductVariationListView, ajx_product_list, ajx_product_variation_list
 
 app_name = 'products'
 
 urlpatterns = [
-    # path('create/', EmployeeCreateView.as_view(), name='employee-create'),
+    path('create/', ProductCreateView.as_view(), name='product-create'),
     # path('variations/create/', ProductVariationCreateView.as_view(), name='product-variation-create'),
 
 
