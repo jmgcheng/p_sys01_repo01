@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 # from django.utils import timezone
 # # from django.utils.decorators import method_decorator
-# from django.contrib import messages
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
 # from django.contrib.auth.models import Group, Permission, User
@@ -25,6 +25,11 @@ from products.forms import ProductForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 
+class ProductListView(LoginRequiredMixin, ListView):
+    model = Product
+    template_name = 'products/product_list.html'
+
+
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
@@ -32,9 +37,26 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('products:product-list')
 
 
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
-    template_name = 'products/product_list.html'
+    template_name = 'products/product_detail.html'
+
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_form.html'
+    success_url = reverse_lazy('products:product-list')
+
+    def form_valid(self, form):
+        #
+        messages.success(self.request, 'Product updated successfully.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        #
+        messages.warning(self.request, 'Please check errors below')
+        return super().form_invalid(form)
 
 
 class ProductVariationListView(LoginRequiredMixin, ListView):
