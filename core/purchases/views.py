@@ -1,8 +1,12 @@
-from audioop import reverse
+# from audioop import reverse
 # from django.shortcuts import redirect, render
 # from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 # from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 # from .models import Purchase, PurchaseDetail
@@ -77,6 +81,62 @@ class PurchaseRequestUpdateView(LoginRequiredMixin, UpdateView):
             return super().form_valid(form)
         else:
             return self.form_invalid(form)
+
+
+class PurchaseRequestListView(LoginRequiredMixin, ListView):
+    model = PurchaseRequestHeader
+    template_name = 'purchases/purchase_request_list.html'
+
+
+@login_required
+def ajx_purchase_request_list(request):
+
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '')
+
+    #
+    purchase_requests = PurchaseRequestHeader.objects.all()
+
+    if search_value:
+        purchase_requests = purchase_requests.filter(
+
+            Q(code__icontains=search_value)
+
+        ).distinct()
+
+    #
+    purchase_requests = purchase_requests.select_related(
+        'requestor', 'vendor', 'status')
+
+    paginator = Paginator(purchase_requests, length)
+    total_records = paginator.count
+    purchase_requests_page = paginator.get_page(start // length + 1)
+
+    #
+    data = []
+
+    for pr in purchase_requests_page:
+
+        data.append({
+
+            'code': f"<a href='/purchases/requests/{pr.id}/'>{pr.code}</a>",
+            'date': pr.date,
+            'requestor': pr.requestor.user.first_name,
+            'vendor': pr.vendor.name if pr.vendor else '',
+            'status': pr.status.name if pr.status else ''
+
+        })
+
+    response = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': total_records,
+        'data': data
+    }
+
+    return JsonResponse(response)
 
 
 # class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
