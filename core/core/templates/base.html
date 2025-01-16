@@ -91,6 +91,16 @@
                       <li><a class="dropdown-item" href="{% url 'products:product-variation-create' %}">Add Product Variations</a></li>
                     </ul>
                   </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Purchase
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-request-list' %}">Request - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-request-create' %}">Request - Add</a></li>
+                    </ul>
+                  </li>
   
                 </ul>
 

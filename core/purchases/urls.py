@@ -1,5 +1,5 @@
 from django.urls import path
-from purchases.views import PurchaseRequestCreateView, PurchaseRequestUpdateView, PurchaseRequestListView, ajx_purchase_request_list
+from purchases.views import PurchaseRequestCreateView, PurchaseRequestUpdateView, PurchaseRequestListView, PurchaseRequestDetailView, ajx_purchase_request_list
 
 app_name = 'purchases'
 
@@ -17,6 +17,10 @@ urlpatterns = [
     #      name='product-variation-create'),
 
     # path('<int:pk>/', ProductDetailView.as_view(), name='product-detail'),
+
+    path('requests/<int:pk>/', PurchaseRequestDetailView.as_view(),
+         name='purchase-request-detail'),
+
     # path('variations/<int:pk>/', ProductVariationDetailView.as_view(),
     #      name='product-variation-detail'),
 

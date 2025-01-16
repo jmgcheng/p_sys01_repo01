@@ -4,6 +4,7 @@
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 # from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -20,7 +21,7 @@ class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
     model = PurchaseRequestHeader
     template_name = 'purchases/purchase_request_form.html'
     form_class = PurchaseRequestHeaderForm
-    success_url = reverse_lazy('purchases:purchase-request-create')
+    success_url = reverse_lazy('purchases:purchase-request-list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -44,8 +45,16 @@ class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
             purchase_request_header = form.save()
             formset.instance = purchase_request_header
             formset.save()
+
+            #
+            messages.success(
+                self.request, 'Purchase Request created successfully.')
+
             return super().form_valid(form)
         else:
+            #
+            messages.warning(self.request, 'Please check errors below')
+
             return self.form_invalid(form)
 
 
@@ -53,7 +62,7 @@ class PurchaseRequestUpdateView(LoginRequiredMixin, UpdateView):
     model = PurchaseRequestHeader
     template_name = 'purchases/purchase_request_form.html'
     form_class = PurchaseRequestHeaderForm
-    success_url = reverse_lazy('purchases:purchase-request-create')
+    success_url = reverse_lazy('purchases:purchase-request-list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,9 +87,28 @@ class PurchaseRequestUpdateView(LoginRequiredMixin, UpdateView):
             # Save the updated details for the header instance
             formset.instance = purchase_header
             formset.save()
+
+            #
+            messages.success(
+                self.request, 'Purchase Request updated successfully.')
+
             return super().form_valid(form)
         else:
+            #
+            messages.warning(self.request, 'Please check errors below')
+
             return self.form_invalid(form)
+
+
+class PurchaseRequestDetailView(LoginRequiredMixin, DetailView):
+    model = PurchaseRequestHeader
+    template_name = 'purchases/purchase_request_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['details'] = PurchaseRequestDetail.objects.filter(
+            purchase_request_header=self.object)
+        return context
 
 
 class PurchaseRequestListView(LoginRequiredMixin, ListView):
