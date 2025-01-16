@@ -153,7 +153,8 @@ def ajx_purchase_request_list(request):
             'date': pr.date,
             'requestor': pr.requestor.user.first_name,
             'vendor': pr.vendor.name if pr.vendor else '',
-            'status': pr.status.name if pr.status else ''
+            'status': pr.status.name if pr.status else '',
+            'approvers': 'implement this next'
 
         })
 
