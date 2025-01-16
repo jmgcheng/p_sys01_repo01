@@ -1,6 +1,7 @@
 from django.db import models
 from products.models import ProductVariation
 from employees.models import Employee
+from vendors.models import Vendor
 
 
 class PurchaseRequestStatus(models.Model):
@@ -19,6 +20,8 @@ class PurchaseRequestHeader(models.Model):
                             blank=False, null=False)
     date = models.DateField()
     requestor = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(
+        Vendor, on_delete=models.CASCADE, blank=True, null=True)
     status = models.ForeignKey(PurchaseRequestStatus, on_delete=models.CASCADE)
 
     def __str__(self):
