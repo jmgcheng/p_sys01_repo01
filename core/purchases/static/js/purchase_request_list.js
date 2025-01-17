@@ -34,8 +34,8 @@ $(document).ready(function() {
             // bottom2Start: 'info',
             // bottom2End: 'paging'
         },
-        order: [[0, 'asc']],
-        pageLength: 25,
+        order: [[0, 'desc']],
+        pageLength: 50,
     });
     
 });

@@ -7,7 +7,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, F
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 # from .models import Purchase, PurchaseDetail
@@ -151,9 +151,47 @@ def ajx_purchase_request_list(request):
     if search_value:
         purchase_requests = purchase_requests.filter(
 
-            Q(code__icontains=search_value)
+            Q(code__icontains=search_value) |
+            Q(requestor__user__first_name__icontains=search_value) |
+            Q(vendor__name__icontains=search_value) |
+            Q(approver__user__first_name__icontains=search_value)
 
         ).distinct()
+
+    #
+    order_column_index = int(request.GET.get('order[0][column]', 0))
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+    order_column = request.GET.get(
+        f'columns[{order_column_index}][data]', 'id')
+
+    if order_column == 'requestor':
+        order_column = 'requestor__user__first_name'
+        if order_direction == 'desc':
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'vendor':
+        order_column = 'vendor__name'
+        if order_direction == 'desc':
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'approver':
+        order_column = 'approver__user__first_name'
+        if order_direction == 'desc':
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).asc(nulls_last=True))
+    else:
+        if order_direction == 'desc':
+            order_column = f'-{order_column}'
+        purchase_requests = purchase_requests.order_by(order_column)
 
     #
     purchase_requests = purchase_requests.select_related(
