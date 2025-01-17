@@ -1,5 +1,5 @@
 # from audioop import reverse
-# from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render
 # from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
@@ -15,6 +15,7 @@ from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, Purch
 # from .forms import PurchaseForm, PurchaseDetailFormSet, PurchaseFormSet
 from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra
 # from .mixins import AdminRequiredMixin
+from django.views import View
 
 
 class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
@@ -116,6 +117,26 @@ class PurchaseRequestListView(LoginRequiredMixin, ListView):
     template_name = 'purchases/purchase_request_list.html'
 
 
+class PurchaseRequestApproveView(LoginRequiredMixin, View):
+    template_name = 'purchases/purchase_request_confirm_approve.html'
+    success_url = reverse_lazy('purchases:purchase-request-list')
+
+    def get(self, request, *args, **kwargs):
+        purchase_request = PurchaseRequestHeader.objects.get(
+            pk=self.kwargs['pk'])
+        return render(request, self.template_name, {'object': purchase_request})
+
+    def post(self, request, *args, **kwargs):
+        purchase_request = PurchaseRequestHeader.objects.get(
+            pk=self.kwargs['pk'])
+        purchase_request.status = PurchaseRequestStatus.objects.get(
+            name='OPEN (PURCHASING)')
+        purchase_request.approver = request.user.employee
+        purchase_request.save()
+
+        return redirect(self.success_url)
+
+
 @login_required
 def ajx_purchase_request_list(request):
 
@@ -154,7 +175,7 @@ def ajx_purchase_request_list(request):
             'requestor': pr.requestor.user.first_name,
             'vendor': pr.vendor.name if pr.vendor else '',
             'status': pr.status.name if pr.status else '',
-            'approvers': 'implement this next'
+            'approver': pr.approver.user.username if pr.approver else '',
 
         })
 

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load group_tags %}
 {% block title %}Purchase Request Detail{% endblock %}
 
 {% block styles_bmain %}
@@ -44,6 +45,10 @@
                 <td>{{ object.requestor }}</td>
               </tr>
               <tr>
+                <th>Approved By</th>
+                <td>{{ object.approver }}</td>
+              </tr>
+              <tr>
                 <th>Vendor</th>
                 <td>{{ object.vendor.name }}</td>
               </tr>
@@ -78,8 +83,14 @@
               </tbody>
             </table>
             <div class="text-right">
-              <a class="btn btn-secondary" href="{% url 'purchases:purchase-request-update' object.id %}">Edit</a>
-              <a class="btn btn-info" href="{% url 'purchases:purchase-request-list' %}">Back to List</a>
+              <a class="btn btn-primary" href="{% url 'purchases:purchase-request-update' object.id %}">Edit</a>
+              
+              {% if request.user.is_superuser or request.user|in_group:"PURCHASE REQUEST APPROVER" %}
+              <a class="btn btn-success" href="{% url 'purchases:purchase-request-approve' object.pk %}">Approve</a>
+              {% endif %}
+
+              <a class="btn btn-secondary" href="{% url 'purchases:purchase-request-list' %}">Back to List</a>
+
             </div>
           </div>
         </div>

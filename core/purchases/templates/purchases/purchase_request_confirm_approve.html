@@ -1,0 +1,14 @@
+{% extends 'base_center.html' %}
+{% block content %}
+  <h3>Confirm Approve Purchase Request</h3>
+  <hr />
+  <p class="mb-4">
+    Approve this Purchase Request "{{ object.code }}"?
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Yes, Approve</button>
+    <a href="{% url 'purchases:purchase-request-detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

@@ -16,7 +16,7 @@ $(document).ready(function() {
             { data: 'requestor' },
             { data: 'vendor' },
             { data: 'status' },
-            { data: 'approvers' },
+            { data: 'approver' },
         ],
         layout: {
             // topStart: 'pageLength',

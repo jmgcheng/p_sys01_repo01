@@ -19,7 +19,10 @@ class PurchaseRequestHeader(models.Model):
     code = models.CharField(max_length=50, unique=True,
                             blank=False, null=False)
     date = models.DateField()
-    requestor = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    requestor = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, related_name="purchase_request_requestor")
+    approver = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, related_name="purchase_request_approver", blank=True, null=True)
     vendor = models.ForeignKey(
         Vendor, on_delete=models.CASCADE, blank=True, null=True)
     status = models.ForeignKey(PurchaseRequestStatus, on_delete=models.CASCADE)

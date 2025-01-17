@@ -29,6 +29,7 @@ urlpatterns = [
     path('products/', include('products.urls')),
 
     path('purchases/', include('purchases.urls')),
+    # path('approvers/', include('approvers.urls')),
 
     path('profile/', user_views.profile, name='profile'),
     path('profile/password/', user_views.change_password, name='change_password'),
