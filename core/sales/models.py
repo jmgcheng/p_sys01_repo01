@@ -75,6 +75,8 @@ class OfficialReceiptHeader(models.Model):
     status = models.ForeignKey(OfficialReceiptStatus, on_delete=models.CASCADE)
     creator = models.ForeignKey(
         Employee, on_delete=models.CASCADE, related_name="official_receipt_creator")
+    sale_invoice_header = models.ForeignKey(
+        SaleInvoiceHeader, on_delete=models.CASCADE, blank=False, null=True, default=1)
 
     def __str__(self):
         return f"OfficialReceiptHeader #{self.code}"

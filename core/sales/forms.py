@@ -54,7 +54,7 @@ class OfficialReceiptHeaderForm(forms.ModelForm):
 
     class Meta:
         model = OfficialReceiptHeader
-        fields = ['code', 'date']
+        fields = ['code', 'date', 'sale_invoice_header']
 
     def clean(self):
         cleaned_data = super().clean()
