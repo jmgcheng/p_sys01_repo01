@@ -7,6 +7,7 @@ from vendors.models import Vendor
 
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(max_length=50, unique=True, null=False)
+    # OPEN (FOR APPROVAL), OPEN (PURCHASING), CLOSED, CANCELLED, REJECTED
 
     def save(self, *args, **kwargs):
         self.name = self.name.upper()
