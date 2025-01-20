@@ -1,6 +1,6 @@
 {% extends "base.html" %} 
 {% load static %} 
-{% block title %}Inventory Add List{% endblock %} 
+{% block title %}Inventory Deduct List{% endblock %} 
 {% block styles_bmain %}
 <link href="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.css" rel="stylesheet">
 {% endblock %} 
@@ -12,7 +12,7 @@
 <div class="container-fluid">
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Inventory Adds</h1>
+    <h1 class="h3 mb-0 text-gray-800">Inventory Deducts</h1>
   </div>
 
   <!-- Content Row -->
@@ -20,7 +20,7 @@
     <div class="col">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">Inventory Add - List</h6>
+          <h6 class="m-0 font-weight-bold text-primary">Inventory Deduct - List</h6>
         </div>
 
         <div class="card-body">
@@ -31,7 +31,7 @@
                 <tr>
                   <th>Code</th>
                   <th>Date</th>
-                  <th>Added By</th>
+                  <th>Deducted By</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -56,5 +56,5 @@
 <script src="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.js"></script>
 {% endblock %} 
 {% block scripts %}
-<script src="{% static 'js/inventory_add_list.js' %}"></script>
+<script src="{% static 'js/inventory_deduct_list.js' %}"></script>
 {% endblock %}

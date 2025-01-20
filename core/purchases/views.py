@@ -137,11 +137,6 @@ class PurchaseRequestApproveView(LoginRequiredMixin, View):
         return redirect(self.success_url)
 
 
-# -------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------
-
-
 class PurchaseReceiveCreateView(LoginRequiredMixin, CreateView):
     model = PurchaseReceiveHeader
     template_name = 'purchases/purchase_receive_form.html'
@@ -237,11 +232,6 @@ class PurchaseReceiveDetailView(LoginRequiredMixin, DetailView):
 class PurchaseReceiveListView(LoginRequiredMixin, ListView):
     model = PurchaseReceiveHeader
     template_name = 'purchases/purchase_receive_list.html'
-
-
-# -------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------
 
 
 @login_required
