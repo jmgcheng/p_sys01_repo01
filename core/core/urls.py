@@ -28,7 +28,9 @@ urlpatterns = [
     path('employees/', include('employees.urls')),
     path('products/', include('products.urls')),
 
+    path('inventories/', include('inventories.urls')),
     path('purchases/', include('purchases.urls')),
+
     # path('approvers/', include('approvers.urls')),
 
     path('profile/', user_views.profile, name='profile'),
