@@ -71,6 +71,7 @@ INSTALLED_APPS = [
 
     'approvers',
     'purchases',
+    'sales',
 
     'django_celery_results',
     'dbbackup',

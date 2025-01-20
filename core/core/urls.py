@@ -30,6 +30,7 @@ urlpatterns = [
 
     path('inventories/', include('inventories.urls')),
     path('purchases/', include('purchases.urls')),
+    path('sales/', include('sales.urls')),
 
     # path('approvers/', include('approvers.urls')),
 
