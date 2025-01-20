@@ -45,6 +45,18 @@ class PurchaseRequestDetail(models.Model):
         return f"PurchaseRequestDetail #{self.id}"
 
 
+class PurchaseReceiveStatus(models.Model):
+    name = models.CharField(max_length=50, unique=True, null=False)
+    # RECEIVED (NO ISSUE), RECEIVED (WITH ISSUE), CLOSED, CANCELLED
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
 class PurchaseReceiveHeader(models.Model):
     code = models.CharField(max_length=50, unique=True,
                             blank=False, null=False, default=0)
@@ -52,6 +64,8 @@ class PurchaseReceiveHeader(models.Model):
     receiver = models.ForeignKey(Employee, on_delete=models.CASCADE, default=0)
     purchase_request_header = models.ForeignKey(
         PurchaseRequestHeader, on_delete=models.CASCADE, blank=False, null=True)
+    status = models.ForeignKey(
+        PurchaseReceiveStatus, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return f"PurchaseReceiveHeader #{self.code}"

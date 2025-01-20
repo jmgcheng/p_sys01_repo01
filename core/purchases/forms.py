@@ -61,7 +61,8 @@ class PurchaseReceiveHeaderForm(forms.ModelForm):
 
     class Meta:
         model = PurchaseReceiveHeader
-        fields = ['code', 'date', 'purchase_request_header', 'receiver']
+        fields = ['code', 'date',
+                  'purchase_request_header', 'receiver', 'status']
 
     def clean(self):
         cleaned_data = super().clean()
