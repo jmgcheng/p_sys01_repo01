@@ -11,9 +11,9 @@ from django.db.models import Q, F
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 # from .models import Purchase, PurchaseDetail
-from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus
+from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
 # from .forms import PurchaseForm, PurchaseDetailFormSet, PurchaseFormSet
-from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra
+from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 # from .mixins import AdminRequiredMixin
 from django.views import View
 
@@ -137,6 +137,113 @@ class PurchaseRequestApproveView(LoginRequiredMixin, View):
         return redirect(self.success_url)
 
 
+# -------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
+
+
+class PurchaseReceiveCreateView(LoginRequiredMixin, CreateView):
+    model = PurchaseReceiveHeader
+    template_name = 'purchases/purchase_receive_form.html'
+    form_class = PurchaseReceiveHeaderForm
+    success_url = reverse_lazy('purchases:purchase-receive-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = PurchaseReceiveInlineFormSet(
+                self.request.POST, prefix='purchase_receive_detail', instance=self.object)
+        else:
+            context['formset'] = PurchaseReceiveInlineFormSet(
+                prefix='purchase_receive_detail', instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        # form.instance.receiver = self.request.user.employee
+
+        formset = context['formset']
+
+        if formset.is_valid():
+            purchase_receive_header = form.save()
+            formset.instance = purchase_receive_header
+            formset.save()
+
+            #
+            messages.success(
+                self.request, 'Purchase Receive created successfully.')
+
+            return super().form_valid(form)
+        else:
+            #
+            messages.warning(self.request, 'Please check errors below')
+
+            return self.form_invalid(form)
+
+
+class PurchaseReceiveUpdateView(LoginRequiredMixin, UpdateView):
+    model = PurchaseReceiveHeader
+    template_name = 'purchases/purchase_receive_form.html'
+    form_class = PurchaseReceiveHeaderForm
+    success_url = reverse_lazy('purchases:purchase-receive-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            # Load existing PurchaseReceiveDetail objects for the header instance
+            context['formset'] = PurchaseReceiveInlineFormSetNoExtra(
+                self.request.POST, instance=self.object, prefix='purchase_receive_detail', )
+        else:
+            # Populate the formset with the existing details for the header instance
+            context['formset'] = PurchaseReceiveInlineFormSetNoExtra(
+                instance=self.object, prefix='purchase_receive_detail',)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+
+        if formset.is_valid():
+            # Save the updated header instance
+            purchase_header = form.save()
+
+            # Save the updated details for the header instance
+            formset.instance = purchase_header
+            formset.save()
+
+            #
+            messages.success(
+                self.request, 'Purchase Receive updated successfully.')
+
+            return super().form_valid(form)
+        else:
+            #
+            messages.warning(self.request, 'Please check errors below')
+
+            return self.form_invalid(form)
+
+
+class PurchaseReceiveDetailView(LoginRequiredMixin, DetailView):
+    model = PurchaseReceiveHeader
+    template_name = 'purchases/purchase_receive_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['details'] = PurchaseReceiveDetail.objects.filter(
+            purchase_receive_header=self.object)
+        return context
+
+
+class PurchaseReceiveListView(LoginRequiredMixin, ListView):
+    model = PurchaseReceiveHeader
+    template_name = 'purchases/purchase_receive_list.html'
+
+
+# -------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
+
+
 @login_required
 def ajx_purchase_request_list(request):
 
@@ -227,6 +334,77 @@ def ajx_purchase_request_list(request):
     return JsonResponse(response)
 
 
+@login_required
+def ajx_purchase_receive_list(request):
+
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '')
+
+    #
+    purchase_receives = PurchaseReceiveHeader.objects.all()
+
+    if search_value:
+        purchase_receives = purchase_receives.filter(
+
+            Q(code__icontains=search_value) |
+            Q(receiver__user__first_name__icontains=search_value)
+
+        ).distinct()
+
+    #
+    order_column_index = int(request.GET.get('order[0][column]', 0))
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+    order_column = request.GET.get(
+        f'columns[{order_column_index}][data]', 'id')
+
+    if order_column == 'receiver':
+        order_column = 'receiver__user__first_name'
+        if order_direction == 'desc':
+            purchase_receives = purchase_receives.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            purchase_receives = purchase_receives.order_by(
+                F(order_column).asc(nulls_last=True))
+    else:
+        if order_direction == 'desc':
+            order_column = f'-{order_column}'
+        purchase_receives = purchase_receives.order_by(order_column)
+
+    #
+    purchase_receives = purchase_receives.select_related(
+        'receiver', 'purchase_request_header')
+
+    paginator = Paginator(purchase_receives, length)
+    total_records = paginator.count
+    purchase_receives_page = paginator.get_page(start // length + 1)
+
+    #
+    data = []
+
+    for pr in purchase_receives_page:
+
+        data.append({
+
+            'code': f"<a href='/purchases/receives/{pr.id}/'>{pr.code}</a>",
+            'request_code': f"<a href='/purchases/requests/{pr.purchase_request_header.id}/'>{pr.purchase_request_header.code}</a>" if pr.purchase_request_header else '',
+            'date': pr.date,
+            'receiver': pr.receiver.user.first_name,
+
+        })
+
+    response = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': total_records,
+        'data': data
+    }
+
+    return JsonResponse(response)
+
+
+# to be deleted
 # class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
 #     model = PurchaseRequestHeader
 #     template_name = 'purchases/purchase_request_form.html'

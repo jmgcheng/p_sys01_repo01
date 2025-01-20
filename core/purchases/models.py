@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from products.models import ProductVariation
 from employees.models import Employee
@@ -28,7 +29,7 @@ class PurchaseRequestHeader(models.Model):
     status = models.ForeignKey(PurchaseRequestStatus, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.code
+        return f"PurchaseRequestHeader #{self.code}"
 
 
 class PurchaseRequestDetail(models.Model):
@@ -44,8 +45,24 @@ class PurchaseRequestDetail(models.Model):
 
 
 class PurchaseReceiveHeader(models.Model):
-    pass
+    code = models.CharField(max_length=50, unique=True,
+                            blank=False, null=False, default=0)
+    date = models.DateField(default=datetime.now)
+    receiver = models.ForeignKey(Employee, on_delete=models.CASCADE, default=0)
+    purchase_request_header = models.ForeignKey(
+        PurchaseRequestHeader, on_delete=models.CASCADE, blank=False, null=True)
+
+    def __str__(self):
+        return f"PurchaseReceiveHeader #{self.code}"
 
 
 class PurchaseReceiveDetail(models.Model):
-    pass
+    purchase_receive_header = models.ForeignKey(
+        PurchaseReceiveHeader, on_delete=models.CASCADE, blank=False, null=True)
+    product_variation = models.ForeignKey(
+        ProductVariation, on_delete=models.CASCADE, related_name="purchase_receive_product_variation", default=0)
+    quantity_received = models.PositiveIntegerField(
+        default=0, blank=False, null=False)
+
+    def __str__(self):
+        return f"PurchaseReceiveDetail #{self.id}"
