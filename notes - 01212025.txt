@@ -829,7 +829,7 @@
 		/ cleanup - code
 
 
-	- milestone - nn - vendor app
+	/ milestone - nn - vendor app
 		/
 			> python manage.py startapp vendors
 		/ setup - model
@@ -847,7 +847,7 @@
 			- domain.com/vendors/n/update
 
 
-	- milestone - nn - customer app
+	/ milestone - nn - customer app
 		/ 
 			> python manage.py startapp customers
 		/ setup - model
@@ -865,13 +865,13 @@
 			- domain.com/customers/n
 			- domain.com/customers/n/update
 
-	- milestone - nn - purchases app
-		- 
+	/ milestone - nn - purchases app
+		/ 
 			>
 				/ PurchaseRequestHeader : PurchaseRequestDetail 
 				/ PurchaseReceiveHeader : PurchaseReceiveDetail
 				/ InventoryAddHeader : InventoryAddDetail
-		-
+		/
 			> python manage.py startapp purchases
 			> python manage.py startapp approvers
 			> python manage.py startapp inventories
@@ -911,19 +911,16 @@
 		- setup - celery rabbitmq - bulk insert/update
 
 
-
-
-
-	- milestone - nn - sales app
-		- setup - model
+	/ milestone - nn - sales app
+		/ setup - model
 			> 
 				/ InventoryDeductHeader : InventoryDeductDetail
 				- SalesInvoiceHeader : SalesInvoiceDetail
 				- OfficialReceiptHeader : OfficialReceiptDetail
-		-
+		/
 			> python manage.py startapp sales
 			? python manage.py SI and OR under sales app???
-		- setup - url
+		/ setup - url
 			/ domain.com/inventories/deducts
 			/ domain.com/inventories/deducts/create
 			/ domain.com/inventories/deducts/n
@@ -934,32 +931,126 @@
 			/ domain.com/sales/invoices/n
 			/ domain.com/sales/invoices/n/update
 			-
-			- domain.com/sales/receipts
-			- domain.com/sales/receipts/create
-			- domain.com/sales/receipts/n
-			- domain.com/sales/receipts/n/update
-		- setup - views
-		- setup - admins.py
-		- setup - crud
-			- create
-			- list
-				- datables
-				- sorting, filtering, paging
-			- detail
-			- update
-		- setup - js, css
+			/ domain.com/sales/receipts
+			/ domain.com/sales/receipts/create
+			/ domain.com/sales/receipts/n
+			/ domain.com/sales/receipts/n/update
+		/ setup - views
+		/ setup - admins.py
+		/ setup - crud
+			/ create
+			/ list
+				/ datables
+				/ sorting, filtering, paging
+			/ detail
+			/ update
+		/ setup - js, css
 		- setup - management command - bulk insert/update
 		- setup - celery rabbitmq - bulk insert/update
 
 
+	/ milestone - nn - milestone check
+		/ crud purchase request. Has simple approving flow PurchaseRequestApproveView. An admin or has a correct group can approve purchase request in detail page No separate list for needed to be approve for now to make it simple. Can be modified someday for specific flow.
+		/ add vendors app. Admin usage for now. No public crud
+		/ add customers app. Admin usage for now. No public crud
+		/ crud purchase receive. No strict flow yet. No updating of status yet. No checking other apps details yet.
+		/ crud inventory add
+		/ crud inventory deduct
+		/ add sales invoice. No strict flow yet. No updating of status yet. No checking other apps details yet. No checking if all items are paid yet.
+		/ add sales official receipt. No strict flow yet. No updating of status yet. No checking other apps details yet. No checking if all items are paid yet. Will only be use for inventory deduct. Can create (payment receipt) someday to auto attach in this transaction
+
+
+
+	- milestone - nn - eye candies
+		- list - 1st batch eye candies
+
+	- milestone - nn - transaction flow
+		- 
+
+	- milestone - nn - fixing
+		- fix - filtering/sorting - datatables all needed columns
+			- app ____
+
+	- milestone - nn - add/update features
+		- add - attach - apps details to parent transaction
+			- purchase request
+			- sales invoice
+		- implement - inventory - quantity table page
+		- finalize - permissions - for menu and classes
+		- update - main menu arrangement
+		- update - permissions
+			- main menu
+			- class
+
+	- milestone - nn - eye candies
+		- implement - eye candies
+		- 
+
+	- milestone - nn - ui improvements
+		- 
+
+	- milestone - nn - management commands
+		-
 
 
 
 
 
-	- milestone - nn - consume inventory app
-		- list - flow
-			> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

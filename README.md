@@ -54,5 +54,6 @@
 - fix - filtering/sorting - datatables all needed columns - on different apps
 - add/attach - apps details to parent transaction - eg show attached official receipts transaction in sales invoice detail. This is for easy manual approval someday if we approve manually and eye candy
 - finalize - transaction flows - Note/Save 'hc system\notes.txt'
+- implement - inventory quantity
 - finalize - ui improvements
 - create - management commands for all apps - if all flow are final and stable
