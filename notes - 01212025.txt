@@ -1,0 +1,1031 @@
+
+- models
+	- auth_user - !default django
+		> all fields from django
+		- username
+		- first_name
+		- last_name
+		- email
+		- ...
+	- Employee
+		- id
+		- user
+		- middle_name
+		- gender
+		- contact
+		- birth_date
+		- address
+		- status
+			- PROBATION, REGULAR, SEPARATED, TERMINATED, 
+		- start_date
+		- regular_date
+		- separation_date
+		- position(job)
+			- DOCTOR, NURSE, CLERK, ...
+		- position_level
+			- LEVEL 1, LEVEL 2, XYZ
+		- position_specialties - ManyToManyField
+			- CARDIOLOGISTS, NEUROLOGISTS, PEDIATRICIANS, ...
+		- 
+	- Patient
+		- id
+		- firt_name
+		- last_name
+		- middle_name
+		- gender
+		- email
+		- contact
+		- birth_date
+		- address
+		- 
+	- Appointment
+		> who can create appointments?
+			> assistant of a doctor clinic
+			> operation admin
+			> clerk at ER
+			> rounding officer
+			> 
+		- id
+		- patient
+		- doctor
+		- create_date
+		- meeting_date
+		- status
+			- SCHEDULED, COMPLETED, CANCELED, RESCHED, POSTPONED, ONGOING/WAITING/OPEN???
+		- patient_type
+			- OUTPATIENT, INPATIENT, EMERGENCY, 
+		- visit_type ???
+			- CONSULTATION, OPERATION, EMERGENCY, ROUNDING, 
+		- visit_reason
+		- notes
+		- 
+		- conditions - ManyToManyField
+			> every appointment maybe we can auto add condition if any
+			> https://www.nhsinform.scot/illnesses-and-conditions/a-to-z/
+		- recorded_allergies(or just allergies) - ManyToManyField
+			> redundant of conditions?
+		- recorded_medications - ManyToManyField
+			> every appointment maybe we can auto add on going medications if any
+			> https://www.drugs.com/drug_information.html
+			> https://www.nhs.uk/medicines/
+	X AppointmentAttachments
+		- id
+			- 
+	X PatientHistory
+		> contents transfered to appointment model itself
+		- id
+		- appointment
+	- Illness
+		- id
+		- name
+		- description
+	- Medicine
+		- id
+		- name
+		- description
+	- PatientBill
+		> who will bill the patient?
+			> when they visit a clinic for consultation/checkup
+				> doctor's fee
+				> medicines if any
+			> for outpatient operation
+				> doctor's fee
+				> medicines if any
+				> hospital fee if any
+			> when they visit er
+				> doctor's fee
+				> medicines if any
+				> hospital fee if any
+			> payment for admission expense every 3~4days to maintain low bill???
+				> doctor's fee if any
+				> medicines if any
+				> room usage
+				> misc if any
+			> discharge for admission expenses
+				> doctor's fee if any
+				> medicines if any
+				> room usage
+				> misc if any
+		- id
+		- date
+		- patient
+		- patient_type
+			- OUTPATIENT, INPATIENT, EMERGENCY, 
+		- appointment
+			> NULLABLE??? null if:
+				- payment for admission expense every 3~4days to maintain low bill???
+				- discharge for admission expenses				
+		- status
+			- OPEN, PAID, CLOSED???, CANCELLED
+		-
+	- PatientBillDetail
+		- id
+		- bill
+		- type
+			- CONSULTATION, OPERATION, MISCELLANEOUS???, DOCTORS FEE???, MEDICATIONS???, 
+		- name/desc?
+		- amount
+	- PatientBillPayments
+		- id
+		- bill
+		- date
+		- method
+			- CASH, CARD, INSURANCE
+		- amount
+		- status
+			- APPROVED, PENDING, 
+	- PatientBillDiscounts
+		- id
+		- bill
+		- date
+		- type
+			- SENIOR, INSURANCE??? 
+		- amount
+		- status
+			- APPROVED, PENDING, 
+	- Inventory
+		- https://github.com/jmgcheng/customUserBlogProdInvApi01/blob/main/core/products/models.py
+	- Purchase
+		- https://github.com/jmgcheng/customUserBlogProdInvApi01/blob/main/core/purchases/models.py
+	- Sale
+		- https://github.com/jmgcheng/customUserBlogProdInvApi01/blob/main/core/sales/models.py
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+- plan - milestones
+	/ milestone - nn - rough model
+		- draft - model
+	/ milestone - nn - url planning
+		- domain.com
+		- domain.com/accounts/login
+		- domain.com/profile
+		- domain.com/profile/password
+		- domain.com/employees/
+		- domain.com/employees/create
+		- domain.com/employees/n
+		- domain.com/employees/n/update/
+		- domain.com/patients/
+		- domain.com/patients/create
+		- domain.com/patients/n
+		- domain.com/patients/n/update/
+		- domain.com/appointments/
+		- domain.com/appointments/create
+		- domain.com/appointments/n
+		- domain.com/appointments/n/update/
+		- domain.com/illnesses
+		- domain.com/medicines
+		- domain.com/bills
+		- domain.com/inventories
+		- domain.com/purchases
+		- domain.com/sales
+		- ...
+	/ milestone - nn - starting setup
+		/ setup - folder
+			> mkdir projName
+			> cd projName
+		/ prep - visual studio code
+		/ prep - python
+		/ prep - docker app
+		/ prep - pgadmin
+		/ prep - django
+			> python -m venv env
+			> env\Scripts\activate
+			> pip install Django
+			> django-admin startproject core
+			> cd core
+			> code .
+			> python manage.py runserver
+	- milestone - nn - prep project
+		- prep - apps
+			> pip install django-debug-toolbar
+			> pip install django-crispy-forms
+			> pip install crispy-bootstrap4
+			> pip install crispy-bootstrap5
+			> pip install python-decouple
+			> pip install django-pandas
+			> pip install openpyxl
+			> pip install numpy
+			> pip install psycopg2
+			> pip install psycopg2-binary
+			> pip install django-dbbackup
+			> pip install gunicorn
+			/ update - settings.py
+				/ change - SECRET_KEY
+			/ add - environment variable windows
+				/ delete db.sqlite3 and migration folders if restart needed
+			> python manage.py makemigrations
+			> python manage.py migrate
+			> python manage.py createsuperuser
+			> 
+			> python manage.py startapp pages
+			> python manage.py startapp users
+			> python manage.py startapp employees
+			> python manage.py startapp management_commands
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			>
+			> python manage.py startapp inventories
+			> python manage.py startapp purchases
+			> python manage.py startapp sales
+			> 
+			> python manage.py startapp illnesses
+			> python manage.py startapp medicines
+			> 
+			> python manage.py startapp patients
+			> python manage.py startapp appointments
+			> python manage.py startapp bills
+			>
+		/ setup - settings.py
+			/ setup - installed apps
+			/ setup - templates
+			/ setup - debug
+			/ setup - TIME_ZONE, USE_I18N, USE_TZ
+	- milestone - nn - prep requirements
+		/ setup - system requirements
+			> pip freeze > requirements.txt
+			> pip install -r requirements.txt
+		- add - system requirements - base on needed
+			> 
+				amqp==5.2.0
+				asgiref==3.8.1
+				billiard==4.2.0
+				celery==5.4.0
+				click==8.1.7
+				click-didyoumean==0.3.1
+				click-plugins==1.1.1
+				click-repl==0.3.0
+				colorama==0.4.6
+				crispy-bootstrap4==2024.1
+				cssbeautifier==1.15.1
+				Django==5.0.6
+				django-celery-results==2.5.1
+				django-crispy-forms==2.2
+				django-dbbackup==4.2.1
+				django-debug-toolbar==4.4.6
+				EditorConfig==0.12.4
+				et-xmlfile==1.1.0
+				Faker==26.0.0
+				flower==2.0.1
+				gunicorn==22.0.0
+				html-tag-names==0.1.2
+				html-void-elements==0.1.0
+				humanize==4.10.0
+				jsbeautifier==1.15.1
+				json5==0.9.25
+				kombu==5.4.0
+				numpy==2.0.0
+				openpyxl==3.1.5
+				packaging==24.1
+				pandas==2.2.2
+				pathspec==0.12.1
+				pillow==10.4.0
+				prometheus_client==0.20.0
+				prompt_toolkit==3.0.47
+				psycopg2==2.9.9
+				psycopg2-binary==2.9.9
+				python-dateutil==2.9.0.post0
+				python-decouple==3.8
+				pytz==2024.1
+				PyYAML==6.0.2
+				regex==2024.9.11
+				six==1.16.0
+				sqlparse==0.5.0
+				tornado==6.4.1
+				tqdm==4.66.5
+				tzdata==2024.1
+				vine==5.1.0
+				wcwidth==0.2.13
+		/ setup again - system requirements
+			> pip freeze > requirements
+			> pip install -r requirements.txt
+	/ milestone - nn - setup windows env and db
+		/ env
+			> not sure why we still need .env file for database but secret key not needed
+				> config('DJANGO_SECRET_KEY_SYS01') was able to pickup windows env
+				> config('DATABASE_...') was not
+				> i did deactivate the env. Maybe I also need to close cmd. Else also restart computer properly
+				> yep, need to close cmd and use a new one
+			DATABASE_PSYS_HOST db
+			DATABASE_PSYS_NAME psys_db
+			DATABASE_PSYS_USER psys_user
+			DATABASE_PSYS_PASSWORD w3Usethis1
+			DATABASE_PSYS_PORT 5432
+		/ add db
+			> cmd
+			> psql -U postgres
+			> Passw0rd
+			> CREATE DATABASE psys_db;
+			> CREATE USER psys_user WITH PASSWORD 'w3Usethis1';
+			> GRANT ALL PRIVILEGES ON DATABASE psys_db TO psys_user;
+			> ALTER DATABASE psys_db owner to psys_user;
+	/ milestone - nn - setup postgres
+		/ setup - postgres
+			/ setup - settings.py
+	/ milestone - nn - prep folder and file structure
+		/ setup - folder structure
+			> project_name
+				> core
+					> core
+						> static
+							> css
+								> main.css
+							> img
+							> js
+								> main.js
+							> vendor
+								> bootstrap
+								> chart.js
+								> fontawesome-free
+								> jquery
+								> jquery-easing
+						> templates
+							> shared
+								> repeatable.html
+							> base.html
+							> base_login.html
+							> base_center.html
+						> templatetags
+					> pages
+					> employees
+					> patients
+					> appointments
+					> illnesses
+					> medicines
+					> bills
+					> inventories
+					> purchases
+					> sales
+					> management_commands
+						> management
+							> commands
+								> import_test.py
+					> media
+						> uploads
+					> backup
+		/ prep - static
+			> python manage.py collectstatic
+	/ milestone - nn - setup basic page
+		/ setup - basic blank home page
+			> login page
+	- milestone - nn - setup repo
+		x setup - private github repo
+			> there seems to be issue for github if private repo and you share it
+		/ setup - owner and maintainer
+		- test - readme - pushing, pulling
+		- setup - github ssh if possible
+	/ milestone - nn - setup login page
+		/ setup - login page
+	- milestone - nn - employees app
+		/ setup - model
+		/ setup - url
+		/ setup - views
+		/ setup - admins.py
+		/ setup - crud
+			/ create
+			/ list
+				/ datables
+				/ sorting, filtering, paging
+			/ detail
+			/ update
+		/ setup - js, css
+	/ milestone - nn - employees app - management commands
+		/ insert new records
+			/ list - commands
+				/ seeding - for a deleted database, fresh start
+					> this means database has tables but no data for all of our own model. No updating data
+					> this means we import data base on 'what should be inserted/created first'
+					/ command
+						> python manage.py insert_seeds
+							/ employee status
+							/ employee job level
+							/ employee job
+							/ employee job specialty
+							/ employee
+	/ milestone - nn - setup docker
+		/ setup docker
+		/ setup docker compose
+		/ test - building image
+		/ test - running image
+	/ milestone - nn - setup celery and rabbitmq
+		/ setup celery
+		/ setup rabbitmq
+		/ test - bulk - employees
+			/ insert
+			/ update
+	/ milestone - nn - employees app - management commands
+		/ controls - bulk insert new
+		/ controls - bulk update records
+		/ controls - export
+		- 
+	/ milestone - nn - milestone check
+		/ check - adding employee/user 1 is to 1
+		/ check - employee can login, login, change password
+		/ check - crud
+		/ check - bulk insert, update
+		/ check - employee list - view, filter, pagination
+		/ check - all db working
+		/ check - docker working
+		/ check - requirements.txt
+		/ cleanup - code
+	/ milestone - nn - implement backup
+		> pip install django-dbbackup
+		/ check - db backup working
+	/ milestone - nn - milestone check
+		/ create - flag milestone - github
+			> this is so that we can reuse this template someday
+
+
+	/ milestone - nn - moving inventory transactions
+		> list and "name" here all possibles we could think of
+		> but just implement the simple stuffs for the portfolio. Main goal is just the portfolio show for now
+		/ list - transactions - add inventory
+			U "manual" add
+				- use for starting inventory
+				- use for if user needs to add more
+				- use for if user just want to add something in the inventory to balance the quantity
+				> InventoryAddHeader : InventoryAddDetail
+			U received from purchases from suppliers or retails
+				! PurchaseRequestHeader and PurchaseReceiveHeader are not the same
+					> Request contains the original order
+					> BUT in reality, nothing is perfect and purchaser or supplier might "comprimise" to just get a different item or your helper might just buy a red soap rather than a blue soap
+					> as to why Receive dictates the final received or final correct recieved
+				> PurchaseReceiveHeader : PurchaseReceiveDetail
+			- received from supplier that made a wrong send
+				> PurchaseWrongReceiveHeader : PurchaseWrongReceiveDetail
+					> PurchaseReceiveHeader might already solve the issue but this PurchaseWrongReceiveHeader can be more specific
+			- received from transfers from other warehouse
+				> TransferReceiveHeader : TransferReceiveDetail
+			- made from refund sales
+				> CancelSaleHeader : CancelSaleDetail
+					> use for if the business customer decides they don't want to buy the business item anymore and give it back to you
+					> or if the business got back the item that their employee incorrectly sent
+			- put back use inventory
+				> BusinessRecallUseHeader : BusinessRecallUseDetail
+					> use this to mark used inventory back to inventory count
+					> will probobly not get used 
+			- 
+		/ list - transactions - deduct inventory
+			U "manual" deduct
+				- use for if user just want to deduct something in the inventory to balance the quantity
+				> DeductInventoryHeader : DeductInventoryDetail
+			U made from sales
+				> SalesReceiptHeader : SalesReceiptDetail
+					> this can also be named as OfficialReceiptHeader : OfficialReceiptDetail
+					> this is different from SalesInvoicetHeader as customer can pay seperatetly
+			- made from wrong sales release
+				> WrongReleaseHeader : WrongReleaseDetail
+					> use this if your business found out that your employee sent a wrong item
+			- made from transferring inventory to other warehouse
+				> TransferSendHeader : TransferSendDetail
+			- made from "cancel" or return to supplier the purchase because owner did not accept the delivery
+				> ReturnWrongReceiveHeader : ReturnWrongReceiveDetail
+					> business use this to send back PurchaseWrongReceiveHeader to the supplier
+			- made from personal/business consumption
+				> BusinessConsumptionHeader : BusinessConsumptionDetail
+					> use to deduct the inventory everytime helper use the dishwashing soap
+			- made from personal/business use
+				> BusinessUseHeader : BusinessUseDetail
+					> use to mark out an inventory (eg. computer monitor) from the inventory
+					> this is useful when the business both use and sell the same items (eg. computer monitor)
+			- 
+
+
+	- milestone - nn - rough inventory flow - plan inventory flow, restock, purchase, salse, deduct
+		- diff sales flow
+			- abenson style
+				- attendant list items in system to be sold
+					* system allows employee to create invoice
+					> this is where an employee creates a "Sale{______}"
+					* system allows employee to add header details
+					* system allows employee to add items
+					* system saves sales with status open
+					> this is where the system saves "Sale{______}Header" with status open
+				- attendant prints an invoice to be paid by customer
+					* system shows sale detail of the sales and allows for printing
+					* system shows invoice total due
+					> since this is abenson style, employee can now close the window as a different employee can continue the transaction
+				- attendant ask customer of payment mode
+					- if cash
+						- customer pays cash
+						- attendant finds the invoice in the system 
+							> an employee can open the said "Sale{______}" transaction
+							* system show the sale invoice header and details
+						- attendant creates payment for the invoice
+							* system allows logging/adding for payment for specific invoice
+							> here the employee can add/attached a payment for the said "Sale{______}" transaction
+								> it doesn't matter how many transactions gets attached to the said "Sale{______}" transaction
+						- attendant choose customer transaction type (cash)
+							* system allows if payment is cash, cc, debit
+						- attendant enters customer's payment 
+							* system ask for due amount. Employee can change
+							* system ask for customer payment amount
+							* system saves a 'cash payment' for specific invoice
+							* system displays customer change
+							* system opens up cash register for storing money and give change
+							> here the system creates a "Payment{___________}" that will be foreign key to "Sale{______}"
+								> this "Payment{___________}" has the asking amount and the given amount
+								> this "Payment{___________}" is all about payments, not inventory
+						- register opens up for change 
+						!NOTE
+							> its clear here that "Payment{___________}" is auto created after creating the "Sale{______}"(or OfficialReceipt) transaction that is attached to "Sale{______}Header"
+							> separate the concerns for "Payment{___________}" and "Sale{______}"(or OfficialReceipt) transaction
+							> "Sale{______}"(or OfficialReceipt) transaction takes care of deducting inventory
+					- if cc
+						- customer gives cc
+						- attendant finds the invoice in the system
+							> an employee can open the said "Sale{______}" transaction 
+							* system show the sale invoice header and details
+						- attendant creates payment for the invoice
+							* system allows logging/adding for payment for specific invoice
+							> here the employee can add/attached a payment for the said "Sale{______}" transaction
+								> it doesn't matter how many transactions gets attached to the said "Sale{______}" transaction
+						- attendant choose customer transaction type (cc)
+							* system allows if payment is cash, cc, debit
+						- attendant proceeds to cc payment
+							* system ask for due amount. Employee can change
+							* system ask for customer payment amount
+							* system ask for card to be inserted
+						- attendant transact using cc
+							* system communicates with payment gateway
+								* system process payment through gateway
+								* system receives payment confirmation through gateway
+						- attendant receive payment confirmation 
+							* if confirmed, system saves a 'cc payment' for specific invoice
+							> here the system creates a "Payment{___________}" that will be foreign key to "Sale{______}"
+								> this "Payment{___________}" has the asking amount and the given amount
+								> this "Payment{___________}" is all about payments, not inventory
+						!NOTE
+							> its clear here that "Payment{___________}" is auto created after creating the "Sale{______}"(or OfficialReceipt) transaction that is attached to "Sale{______}Header"
+							> separate the concerns for "Payment{___________}" and "Sale{______}"(or OfficialReceipt) transaction
+							> "Sale{______}"(or OfficialReceipt) transaction takes care of deducting inventory
+					- if debit
+						- customer gives debit
+						- attendant finds the invoice in the system 
+							> an employee can open the said "Sale{______}" transaction 
+							* system show the sale invoice header and details
+						- attendant creates payment for the invoice
+							* system allows logging/adding for payment for specific invoice
+							> here the employee can add/attached a payment for the said "Sale{______}" transaction
+								> it doesn't matter how many transactions gets attached to the said "Sale{______}" transaction
+						- attendant choose customer transaction type (debit)
+							* system allows if payment is cash, cc, debit
+						- attendance proceeds to debit payment
+							* system ask for due amount. Employee can change
+							* system ask for customer payment amount
+							* system ask for card to be inserted
+						- customer enters pass
+							* system communicates with payment gateway
+								* system process payment through gateway
+								* system receives payment confirmation through gateway
+						- attendant receive payment confirmation
+							* if confirmed, system saves a 'debit payment' for specific invoice
+							> here the system creates a "Payment{___________}" that will be foreign key to "Sale{______}"
+								> this "Payment{___________}" has the asking amount and the given amount
+								> this "Payment{___________}" is all about payments, not inventory
+						!NOTE
+							> its clear here that "Payment{___________}" is auto created after creating the "Sale{______}"(or OfficialReceipt) transaction that is attached to "Sale{______}Header"
+							> separate the concerns for "Payment{___________}" and "Sale{______}"(or OfficialReceipt) transaction
+							> "Sale{______}"(or OfficialReceipt) transaction takes care of deducting inventory
+				- system creates receipt
+					* system creates "SalesReceipt{__________}" for the specific transaction
+					> this gets create triggered by finishing a "Payment{___________}"
+						> if this happens, a lot of auto checking needs to be done to know what exact items should be in "SalesReceipt{__________}" detail
+					> this can also be manually created by an employee bypassing payment if system does not have payment integration
+					> item quantity here deducts the inventory
+					> items listed here are understood paid 
+				- system updates invoice in system
+					* system saves/updates invoice and etc that needs to be updated
+				- system print receipt of the transaction
+					* system allows prints of said transaction
+				- end of transaction
+			- emall grocery style
+				> this is where an employee creates a "Sale{______}"
+				- attendant scans items to add to list
+					* system keeps adding item detail for this specific transaction
+				- attendant finish scanning items seeing total due
+					* system is already showing the total
+					> this is where the system saves "Sale{______}Header" with status open
+				- attendant ask customer of payment mode
+					- if cash
+						- customer pays cash
+						- attendant choose customer transaction type (cash)
+							* system allows attendant to choose cash, cc, or debit
+						- attendant enters customer's payment 
+							* system ask for due amount. Employee can change
+							* system ask for customer payment amount
+							* system saves a 'cash payment' for specific invoice
+							* system displays customer change
+							* system opens up cash register for storing money and give change
+						- register opens up for change
+					- if cc
+						- customer gives cc
+						- attendant choose customer transaction type (cc)
+							* system allows attendant to choose cash, cc, or debit
+						- attendant proceeds to cc payment
+							* system ask for due amount. Employee can change
+							* system ask for customer payment amount
+							* system ask for card to be inserted
+						- attendant transact using cc
+							* system communicates with payment gateway
+								* system process payment through gateway
+								* system receives payment confirmation through gateway
+						- attendant receive payment confirmation
+							* if confirmed, system saves a 'cc payment' for specific invoice
+					- if debit
+						- customer give card
+						- attendant choose customer transaction type (debit)
+							* system allows attendant to choose cash, cc, or debit
+						- attendance proceeds to debit payment
+							* system ask for due amount. Employee can change
+							* system ask for customer payment amount
+							* system ask for card to be inserted
+						- customer enters pass
+							* system communicates with payment gateway
+								* system process payment through gateway
+								* system receives payment confirmation through gateway
+						- attendant receive payment confirmation
+							* if confirmed, system saves a 'debit payment' for specific invoice
+				- system creates receipt
+					* system creates "SalesReceipt{__________}" for the specific transaction
+					> this gets create triggered by finishing a "Payment{___________}"
+						> if this happens, a lot of auto checking needs to be done to know what exact items should be in "SalesReceipt{__________}" detail
+					> this can also be manually created by an employee bypassing payment if system does not have payment integration
+					> item quantity here deducts the inventory
+					> items listed here are understood paid 
+				- system updates invoice in system
+					* system saves/updates invoice and etc that needs to be updated
+				- system print receipt of the transaction
+					* system allows prints of said transaction
+				- end of transaction
+		- list - flow - Purchase
+			- PurchaseRequestHeader
+				> requestor files for a request
+				> requesting for purchase
+				> waiting for approval
+					> needs an approval(employee)
+					> auto assign to an approver
+					> request creator can also choose an approver
+				> approved for purchase
+				- some important fields
+					- due/asking amount
+					x due release
+						> should just create a different model for this so company can attached multiple "money release" for this request for easy logging
+					x location
+						> what location(warehouse) is requesting the order
+						> we don't have this for now since this system is assuming its just 1 branch
+				- status
+					- OPEN (FOR APPROVAL)
+						> waiting for approval
+					- OPEN (PURCHASING)
+						> purchaser can now purchase
+						> the business is waiting for the stocks arrival
+						> can be use to mark inventory qty that we are "expecting" to arrive
+						> create a different model (PurchaseDisbursementHeader) for "money release" so company can attached multiple "money release" for this request for easy logging
+							> in real life, if purchaser sees "OPEN (PURCHASING)", they can now go to the finance department and ask for the "money", the finance department needs to file a record in a different model so we have separate logs/records for the released money for this purchase. Finance can then attach printed release money record/log in this header
+					- CLOSED
+						> all purchase transaction are closed
+					- CANCELLED
+						- order cancelled
+					- REJECTED
+						- request rejected
+			- PurchaseRequestDetail
+				> list of items requesting to purchase
+			- PurchaseDisbursementHeader
+				> when a finance release money for something to purchase, they use this to log/record it in database
+				> links to "PurchaseRequestHeader"
+				- some important fields
+					- amount_release
+				- status
+					- RELEASED
+						> means purchaser have received the money to pay the purchase
+					- CLOSED
+						> all purchase transaction are closed
+					- CANCELLED
+			- PurchaseReceiveHeader
+				> confirms the arrival/receiving of the item we are purchasing
+				> foreignkey PurchaseRequestHeader
+				x location
+					> to where location(warehouse) this will be stored
+					> we don't have this for now since this system is assuming its just 1 branch
+				- status
+					- RECEIVED (NO ISSUE)
+						> this status adds in inventory
+					- RECEIVED (WITH ISSUE)
+						> this status adds in inventory
+					- CLOSED
+						> this status adds in inventory
+						> already counter checked and approved
+						> all purchase transaction are closed
+					- CANCELLED
+						> this status WILL NOT add in inventory
+			- PurchaseReceiveDetail
+				> list of items to add in inventory
+					> it doesn't matter if the items match the request. Just create a seperate website page to show purchase that has conflicting request and receipt items
+				> add inventory quantity
+		- list - flow - Sales
+			- SalesInvoiceHeader
+				> an employee/agent files for a sale
+				> should have an amount due
+				- status
+					- OPEN (FOR PAYMENT)
+						> can be use to mark some items or their qty as "reserved" in inventory count
+							> because of this status, we can sum the qty of floating items about to go out
+					- CANCELLED
+						> no special thing to do in inventory if cancelled
+						> employee can't "add/attached" "SalesReceiptHeader" in this if status is cancelled
+					- CLOSED
+						> sale is closed, all payment is done
+						> no special thing to do in inventory if cancelled
+						> "closing" should be done in a different process where an employee counter checks "amount due", "total deductions/discounts", "total payment received"
+						> employee can't "add/attached" "SalesReceiptHeader" in this if status is closed 
+			- SalesInvoiceDetail
+				> list of items pending to be sold/deducted
+			- 
+			- SalesReceiptHeader
+				> foreignkey to SalesInvoiceHeader
+				> if there is payment, is generated everytime the customer pays
+				> if no payment, employee can manually create this to mark items that has been sold
+				> employee can create this "SalesReceiptHeader" and attached it to "SalesInvoiceHeader" as many as they want as long as "SalesInvoiceHeader" is still not closed
+					> its up to an employee manager/supervisor who has special privileged to double check sales and close them if they are paid properly
+				- status
+					- PAID
+						> deduct available inventory
+					- CANCELLED
+						> do not deduct inventory
+						> for some reason, this might happen
+			- SalesReceiptDetail
+				> list of items customer paid
+
+			!NOTE
+				> its clear here that "Payment{___________}" is auto created after creating the "Sale{______}"(or OfficialReceipt) transaction that is attached to "Sale{______}Header"
+				> separate the concerns for "Payment{___________}" and "Sale{______}"(or OfficialReceipt) transaction
+				> "Sale{______}"(or OfficialReceipt) transaction takes care of deducting inventory
+		- list - flow - Inventory - Company self consumption/usage flow
+			- BusinessConsumptionHeader ???
+				-
+			- BusinessConsumptionDetail ???
+				- 
+			- BusinessConsumption Release Header ???
+
+
+
+
+	/ milestone - nn - product app
+		/ install
+			> pip install html-sanitizer
+			> pip freeze > requirements.txt
+		/
+			> python manage.py startapp commons
+			> python manage.py startapp products	
+		/ setup - model
+		/ setup - url
+			- domain.com/products
+			- domain.com/products/create
+			- domain.com/products/n
+			- domain.com/products/n/update
+			- domain.com/products/variations
+			- domain.com/products/variations/create
+			- domain.com/products/variations/n
+			- domain.com/products/variations/n/update
+		/ setup - views
+		/ setup - admins.py
+		/ setup - crud - products and product variations
+			/ create
+			/ list
+				/ datables
+				/ sorting, filtering, paging
+			/ detail
+			/ update
+		/ setup - js, css
+		/ setup - management command - bulk insert/update
+		0 setup - celery rabbitmq - bulk insert/update
+		0 check - employee has group for roles
+	
+	/ milestone - nn - milestone check - 12112024
+		/ check - crud product
+		/ check - crud product variation
+		/ check - bulk insert product and product variation
+		/ check - product list - datatable
+		/ check - product variation - datatable
+		/ cleanup - code
+
+
+	- milestone - nn - vendor app
+		/
+			> python manage.py startapp vendors
+		/ setup - model
+			>
+				> name
+				> category
+					> RETAIL
+					> DISTRIBUTOR
+					> WHOLESALER
+		- setup - crud
+		- setup - url
+			- domain.com/vendors
+			- domain.com/vendors/create
+			- domain.com/vendors/n
+			- domain.com/vendors/n/update
+
+
+	- milestone - nn - customer app
+		/ 
+			> python manage.py startapp customers
+		/ setup - model
+			>
+				> first_name
+				> last_name
+				> middle_name
+				> category
+					> RETAIL
+					> PATIENT
+		- setup - crud
+		- setup - url
+			- domain.com/customers
+			- domain.com/customers/create
+			- domain.com/customers/n
+			- domain.com/customers/n/update
+
+	- milestone - nn - purchases app
+		- 
+			>
+				/ PurchaseRequestHeader : PurchaseRequestDetail 
+				/ PurchaseReceiveHeader : PurchaseReceiveDetail
+				/ InventoryAddHeader : InventoryAddDetail
+		-
+			> python manage.py startapp purchases
+			> python manage.py startapp approvers
+			> python manage.py startapp inventories
+		/ setup - model
+		/ setup - url
+			/ domain.com/purchases/requests
+			/ domain.com/purchases/requests/create
+			/ domain.com/purchases/requests/n
+			/ domain.com/purchases/requests/n/update
+			-
+			/ domain.com/purchases/receives
+			/ domain.com/purchases/receives/create
+			/ domain.com/purchases/receives/n
+			/ domain.com/purchases/receives/n/update
+			-
+			/ domain.com/inventories/adds
+			/ domain.com/inventories/adds/create
+			/ domain.com/inventories/adds/n
+			/ domain.com/inventories/adds/n/update
+		/ setup - views
+		/ setup - approvers
+		/ setup - admins.py
+		/ setup - forms.py
+		/ setup - crud
+			/ create
+			/ list
+				/ datables
+				/ sorting, filtering, paging
+			/ detail
+			/ update
+		/ setup - js, css
+		- setup - management command - bulk insert/update
+			- requests
+			- receives
+			! NOTE
+				> deferring as we might encounter a lot of updates in different models
+		- setup - celery rabbitmq - bulk insert/update
+
+
+
+
+
+	- milestone - nn - sales app
+		- setup - model
+			> 
+				/ InventoryDeductHeader : InventoryDeductDetail
+				- SalesInvoiceHeader : SalesInvoiceDetail
+				- OfficialReceiptHeader : OfficialReceiptDetail
+		-
+			> python manage.py startapp sales
+			? python manage.py SI and OR under sales app???
+		- setup - url
+			/ domain.com/inventories/deducts
+			/ domain.com/inventories/deducts/create
+			/ domain.com/inventories/deducts/n
+			/ domain.com/inventories/deducts/n/update
+			- 
+			/ domain.com/sales/invoices
+			/ domain.com/sales/invoices/create
+			/ domain.com/sales/invoices/n
+			/ domain.com/sales/invoices/n/update
+			-
+			- domain.com/sales/receipts
+			- domain.com/sales/receipts/create
+			- domain.com/sales/receipts/n
+			- domain.com/sales/receipts/n/update
+		- setup - views
+		- setup - admins.py
+		- setup - crud
+			- create
+			- list
+				- datables
+				- sorting, filtering, paging
+			- detail
+			- update
+		- setup - js, css
+		- setup - management command - bulk insert/update
+		- setup - celery rabbitmq - bulk insert/update
+
+
+
+
+
+
+
+	- milestone - nn - consume inventory app
+		- list - flow
+			> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+	- milestone - nn - milestone check
+		- check - working properly
+			- inventories
+			- purchases
+			- sales
+			- inventory qty
+		- check - employee has group for roles
+		- check - crud
+		- check - bulk insert, update
+		- check - view, filter, pagination
+		- check - all db working
+		- check - db backup working
+		- check - docker working
+		- check - requirements.txt
+		- cleanup - code
+		- create - flag milestone - github
+			> this is so that we can reuse this template someday
+	- milestone - nn - illnesses
+		- 
+	- milestone - nn - medicines
+		- 
+	- milestone - nn - patients
+		- 
+	- milestone - nn - appointments
+		- 
+	- milestone - nn - bills
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+	- milestone - nn - 
+		- 
+
+
+
+
+
