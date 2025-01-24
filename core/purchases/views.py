@@ -363,7 +363,12 @@ def ajx_purchase_receive_list(request):
         purchase_receives = purchase_receives.filter(
 
             Q(code__icontains=search_value) |
-            Q(receiver__user__first_name__icontains=search_value)
+            Q(date__icontains=search_value) |
+            Q(purchase_request_header__code__icontains=search_value) |
+            Q(receiver__user__first_name__icontains=search_value) |
+            Q(receiver__user__last_name__icontains=search_value) |
+            Q(receiver__user__employee__middle_name__icontains=search_value) |
+            Q(status__name__icontains=search_value)
 
         ).distinct()
 
@@ -381,6 +386,14 @@ def ajx_purchase_receive_list(request):
         else:
             purchase_receives = purchase_receives.order_by(
                 F(order_column).asc(nulls_last=True))
+    elif order_column == 'status':
+        order_column = 'status__name'
+        if order_direction == 'desc':
+            purchase_receives = purchase_receives.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            purchase_receives = purchase_receives.order_by(
+                F(order_column).asc(nulls_last=True))
     else:
         if order_direction == 'desc':
             order_column = f'-{order_column}'
@@ -388,7 +401,7 @@ def ajx_purchase_receive_list(request):
 
     #
     purchase_receives = purchase_receives.select_related(
-        'receiver', 'purchase_request_header')
+        'receiver', 'purchase_request_header', 'status')
 
     paginator = Paginator(purchase_receives, length)
     total_records = paginator.count
@@ -398,13 +411,18 @@ def ajx_purchase_receive_list(request):
     data = []
 
     for pr in purchase_receives_page:
+        fullname_receiver = f'{pr.receiver.user.first_name} {
+            pr.receiver.user.last_name}'
+        fullname_receiver = f'{fullname_receiver} {
+            pr.receiver.user.employee.middle_name}' if pr.receiver.user.employee.middle_name else fullname_receiver
 
         data.append({
 
             'code': f"<a href='/purchases/receives/{pr.id}/'>{pr.code}</a>",
             'request_code': f"<a href='/purchases/requests/{pr.purchase_request_header.id}/'>{pr.purchase_request_header.code}</a>" if pr.purchase_request_header else '',
             'date': pr.date,
-            'receiver': pr.receiver.user.first_name,
+            'receiver': fullname_receiver,
+            'status': pr.status.name if pr.status else '',
 
         })
 

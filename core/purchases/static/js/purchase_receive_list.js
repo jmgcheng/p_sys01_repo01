@@ -15,6 +15,7 @@ $(document).ready(function() {
             { data: 'request_code' },
             { data: 'date' },
             { data: 'receiver' },
+            { data: 'status' },
         ],
         layout: {
             // topStart: 'pageLength',
