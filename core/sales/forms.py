@@ -9,7 +9,7 @@ class SaleInvoiceHeaderForm(forms.ModelForm):
 
     class Meta:
         model = SaleInvoiceHeader
-        fields = ['code', 'date', 'category', 'creator', 'customer']
+        fields = ['code', 'date', 'category', 'creator', 'customer', 'status']
 
     def clean(self):
         cleaned_data = super().clean()

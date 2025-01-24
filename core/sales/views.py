@@ -325,13 +325,38 @@ def ajx_sale_invoice_list(request):
         else:
             sales_invoices = sales_invoices.order_by(
                 F(order_column).asc(nulls_last=True))
+    elif order_column == 'customer':
+        order_column = 'customer__first_name'
+        if order_direction == 'desc':
+            sales_invoices = sales_invoices.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            sales_invoices = sales_invoices.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'category':
+        order_column = 'category__name'
+        if order_direction == 'desc':
+            sales_invoices = sales_invoices.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            sales_invoices = sales_invoices.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'status':
+        order_column = 'status__name'
+        if order_direction == 'desc':
+            sales_invoices = sales_invoices.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            sales_invoices = sales_invoices.order_by(
+                F(order_column).asc(nulls_last=True))
     else:
         if order_direction == 'desc':
             order_column = f'-{order_column}'
         sales_invoices = sales_invoices.order_by(order_column)
 
     #
-    sales_invoices = sales_invoices.select_related('creator')
+    sales_invoices = sales_invoices.select_related(
+        'creator', 'customer', 'category', 'status')
 
     paginator = Paginator(sales_invoices, length)
     total_records = paginator.count
