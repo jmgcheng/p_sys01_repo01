@@ -249,9 +249,15 @@ def ajx_purchase_request_list(request):
         purchase_requests = purchase_requests.filter(
 
             Q(code__icontains=search_value) |
-            Q(requestor__user__first_name__icontains=search_value) |
+            Q(date__icontains=search_value) |
             Q(vendor__name__icontains=search_value) |
-            Q(approver__user__first_name__icontains=search_value)
+            Q(requestor__user__first_name__icontains=search_value) |
+            Q(requestor__user__last_name__icontains=search_value) |
+            Q(requestor__user__employee__middle_name__icontains=search_value) |
+            Q(approver__user__first_name__icontains=search_value) |
+            Q(approver__user__last_name__icontains=search_value) |
+            Q(approver__user__employee__middle_name__icontains=search_value) |
+            Q(status__name__icontains=search_value)
 
         ).distinct()
 
@@ -310,15 +316,25 @@ def ajx_purchase_request_list(request):
     data = []
 
     for pr in purchase_requests_page:
+        fullname_requestor = f'{pr.requestor.user.first_name} {
+            pr.requestor.user.last_name}'
+        fullname_requestor = f'{fullname_requestor} {
+            pr.requestor.user.employee.middle_name}' if pr.requestor.user.employee.middle_name else fullname_requestor
+        fullname_approver = ''
+        if pr.approver:
+            fullname_approver = f'{pr.approver.user.first_name} {
+                pr.approver.user.last_name}'
+            fullname_approver = f'{fullname_approver} {
+                pr.approver.user.employee.middle_name}' if pr.approver.user.employee.middle_name else fullname_approver
 
         data.append({
 
             'code': f"<a href='/purchases/requests/{pr.id}/'>{pr.code}</a>",
             'date': pr.date,
-            'requestor': pr.requestor.user.first_name,
+            'requestor': fullname_requestor,
             'vendor': pr.vendor.name if pr.vendor else '',
             'status': pr.status.name if pr.status else '',
-            'approver': pr.approver.user.first_name if pr.approver else '',
+            'approver': fullname_approver
 
         })
 
