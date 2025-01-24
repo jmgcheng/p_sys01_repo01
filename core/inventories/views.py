@@ -299,7 +299,10 @@ def ajx_inventory_deduct_list(request):
         inventory_deducts = inventory_deducts.filter(
 
             Q(code__icontains=search_value) |
-            Q(deducter__user__first_name__icontains=search_value)
+            Q(date__icontains=search_value) |
+            Q(deducter__user__first_name__icontains=search_value) |
+            Q(deducter__user__last_name__icontains=search_value) |
+            Q(deducter__user__employee__middle_name__icontains=search_value)
 
         ).distinct()
 
@@ -333,12 +336,16 @@ def ajx_inventory_deduct_list(request):
     data = []
 
     for ia in inventory_deducts_page:
+        fullname_deducter = f'{ia.deducter.user.first_name} {
+            ia.deducter.user.last_name}'
+        fullname_deducter = f'{fullname_deducter} {
+            ia.deducter.user.employee.middle_name}' if ia.deducter.user.employee.middle_name else fullname_deducter
 
         data.append({
 
             'code': f"<a href='/inventories/deducts/{ia.id}/'>{ia.code}</a>",
             'date': ia.date,
-            'deducter': ia.deducter.user.first_name,
+            'deducter': fullname_deducter,
 
         })
 
