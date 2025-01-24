@@ -119,6 +119,10 @@ def ajx_product_list(request):
     order_column = request.GET.get(
         f'columns[{order_column_index}][data]', 'id')
 
+    print(f'----------------hermit1------------------')
+    print(order_column)
+    print(f'----------------hermit1------------------')
+
     if order_direction == 'desc':
         order_column = f'-{order_column}'
     products = products.order_by(order_column)
@@ -194,9 +198,34 @@ def ajx_product_variation_list(request):
     order_column = request.GET.get(
         f'columns[{order_column_index}][data]', 'id')
 
-    if order_direction == 'desc':
-        order_column = f'-{order_column}'
-    product_variations = product_variations.order_by(order_column)
+    if order_column == 'product':
+        order_column = 'product__name'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'unit':
+        order_column = 'unit__name'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'color':
+        order_column = 'color__name'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    else:
+        if order_direction == 'desc':
+            order_column = f'-{order_column}'
+        product_variations = product_variations.order_by(order_column)
 
     #
     product_variations = product_variations.select_related(
