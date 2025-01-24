@@ -285,6 +285,14 @@ def ajx_purchase_request_list(request):
         else:
             purchase_requests = purchase_requests.order_by(
                 F(order_column).asc(nulls_last=True))
+    elif order_column == 'status':
+        order_column = 'status__name'
+        if order_direction == 'desc':
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            purchase_requests = purchase_requests.order_by(
+                F(order_column).asc(nulls_last=True))
     else:
         if order_direction == 'desc':
             order_column = f'-{order_column}'
@@ -292,7 +300,7 @@ def ajx_purchase_request_list(request):
 
     #
     purchase_requests = purchase_requests.select_related(
-        'requestor', 'vendor', 'status')
+        'requestor', 'approver', 'vendor', 'status')
 
     paginator = Paginator(purchase_requests, length)
     total_records = paginator.count
@@ -310,7 +318,7 @@ def ajx_purchase_request_list(request):
             'requestor': pr.requestor.user.first_name,
             'vendor': pr.vendor.name if pr.vendor else '',
             'status': pr.status.name if pr.status else '',
-            'approver': pr.approver.user.username if pr.approver else '',
+            'approver': pr.approver.user.first_name if pr.approver else '',
 
         })
 
