@@ -114,11 +114,6 @@ class SaleInvoiceListView(LoginRequiredMixin, ListView):
     template_name = 'sales/sale_invoice_list.html'
 
 
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-
-
 class OfficialReceiptCreateView(LoginRequiredMixin, CreateView):
     model = OfficialReceiptHeader
     template_name = 'sales/official_receipt_form.html'
@@ -219,80 +214,6 @@ class OfficialReceiptListView(LoginRequiredMixin, ListView):
 
 
 @login_required
-def ajx_official_receipt_list(request):
-
-    draw = int(request.GET.get('draw', 1))
-    start = int(request.GET.get('start', 0))
-    length = int(request.GET.get('length', 10))
-    search_value = request.GET.get('search[value]', '')
-
-    #
-    official_receipts = OfficialReceiptHeader.objects.all()
-
-    if search_value:
-        official_receipts = official_receipts.filter(
-
-            Q(code__icontains=search_value) |
-            Q(creator__user__first_name__icontains=search_value)
-
-        ).distinct()
-
-    #
-    order_column_index = int(request.GET.get('order[0][column]', 0))
-    order_direction = request.GET.get('order[0][dir]', 'asc')
-    order_column = request.GET.get(
-        f'columns[{order_column_index}][data]', 'id')
-
-    if order_column == 'creator':
-        order_column = 'creator__user__first_name'
-        if order_direction == 'desc':
-            official_receipts = official_receipts.order_by(
-                F(order_column).desc(nulls_last=True))
-        else:
-            official_receipts = official_receipts.order_by(
-                F(order_column).asc(nulls_last=True))
-    else:
-        if order_direction == 'desc':
-            order_column = f'-{order_column}'
-        official_receipts = official_receipts.order_by(order_column)
-
-    #
-    official_receipts = official_receipts.select_related('creator')
-
-    paginator = Paginator(official_receipts, length)
-    total_records = paginator.count
-    official_receipts_page = paginator.get_page(start // length + 1)
-
-    #
-    data = []
-
-    for ord in official_receipts_page:
-
-        data.append({
-
-            'code': f"<a href='/sales/receipts/{ord.id}/'>{ord.code}</a>",
-            'date': ord.date,
-            'creator': ord.creator.user.first_name,
-            'status': ord.status.name if ord.status else '',
-
-        })
-
-    response = {
-        'draw': draw,
-        'recordsTotal': total_records,
-        'recordsFiltered': total_records,
-        'data': data
-    }
-
-    return JsonResponse(response)
-
-
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-
-
-@login_required
 def ajx_sale_invoice_list(request):
 
     draw = int(request.GET.get('draw', 1))
@@ -375,6 +296,83 @@ def ajx_sale_invoice_list(request):
             'customer': si.customer.first_name if si.customer else '',
             'creator': si.creator.user.first_name,
             'status': si.status.name if si.status else '',
+
+        })
+
+    response = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': total_records,
+        'data': data
+    }
+
+    return JsonResponse(response)
+
+
+@login_required
+def ajx_official_receipt_list(request):
+
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '')
+
+    #
+    official_receipts = OfficialReceiptHeader.objects.all()
+
+    if search_value:
+        official_receipts = official_receipts.filter(
+
+            Q(code__icontains=search_value) |
+            Q(creator__user__first_name__icontains=search_value)
+
+        ).distinct()
+
+    #
+    order_column_index = int(request.GET.get('order[0][column]', 0))
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+    order_column = request.GET.get(
+        f'columns[{order_column_index}][data]', 'id')
+
+    if order_column == 'creator':
+        order_column = 'creator__user__first_name'
+        if order_direction == 'desc':
+            official_receipts = official_receipts.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            official_receipts = official_receipts.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'status':
+        order_column = 'status__name'
+        if order_direction == 'desc':
+            official_receipts = official_receipts.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            official_receipts = official_receipts.order_by(
+                F(order_column).asc(nulls_last=True))
+    else:
+        if order_direction == 'desc':
+            order_column = f'-{order_column}'
+        official_receipts = official_receipts.order_by(order_column)
+
+    #
+    official_receipts = official_receipts.select_related('creator', 'status')
+
+    paginator = Paginator(official_receipts, length)
+    total_records = paginator.count
+    official_receipts_page = paginator.get_page(start // length + 1)
+
+    #
+    data = []
+
+    for ord in official_receipts_page:
+
+        data.append({
+
+            'code': f"<a href='/sales/receipts/{ord.id}/'>{ord.code}</a>",
+            'date': ord.date,
+            'creator': ord.creator.user.first_name,
+            'status': ord.status.name if ord.status else '',
 
         })
 
