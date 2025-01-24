@@ -228,7 +228,15 @@ def ajx_sale_invoice_list(request):
         sales_invoices = sales_invoices.filter(
 
             Q(code__icontains=search_value) |
-            Q(creator__user__first_name__icontains=search_value)
+            Q(date__icontains=search_value) |
+            Q(category__name__icontains=search_value) |
+            Q(customer__first_name__icontains=search_value) |
+            Q(customer__last_name__icontains=search_value) |
+            Q(customer__middle_name__icontains=search_value) |
+            Q(creator__user__first_name__icontains=search_value) |
+            Q(creator__user__last_name__icontains=search_value) |
+            Q(creator__user__employee__middle_name__icontains=search_value) |
+            Q(status__name__icontains=search_value)
 
         ).distinct()
 
@@ -287,14 +295,24 @@ def ajx_sale_invoice_list(request):
     data = []
 
     for si in sales_invoices_page:
+        fullname_creator = f'{si.creator.user.first_name} {
+            si.creator.user.last_name}'
+        fullname_creator = f'{fullname_creator} {
+            si.creator.user.employee.middle_name}' if si.creator.user.employee.middle_name else fullname_creator
+        fullname_customer = ''
+        if si.customer:
+            fullname_customer = f'{si.customer.first_name} {
+                si.customer.last_name}'
+            fullname_customer = f'{fullname_customer} {
+                si.customer.middle_name}' if si.customer.middle_name else fullname_customer
 
         data.append({
 
             'code': f"<a href='/sales/invoices/{si.id}/'>{si.code}</a>",
             'date': si.date,
             'category': si.category.name if si.category else '',
-            'customer': si.customer.first_name if si.customer else '',
-            'creator': si.creator.user.first_name,
+            'customer': fullname_customer,
+            'creator': fullname_creator,
             'status': si.status.name if si.status else '',
 
         })
