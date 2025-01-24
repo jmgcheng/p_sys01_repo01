@@ -224,7 +224,10 @@ def ajx_inventory_add_list(request):
         inventory_adds = inventory_adds.filter(
 
             Q(code__icontains=search_value) |
-            Q(adder__user__first_name__icontains=search_value)
+            Q(date__icontains=search_value) |
+            Q(adder__user__first_name__icontains=search_value) |
+            Q(adder__user__last_name__icontains=search_value) |
+            Q(adder__user__employee__middle_name__icontains=search_value)
 
         ).distinct()
 
@@ -258,12 +261,16 @@ def ajx_inventory_add_list(request):
     data = []
 
     for ia in inventory_adds_page:
+        fullname_adder = f'{ia.adder.user.first_name} {
+            ia.adder.user.last_name}'
+        fullname_adder = f'{fullname_adder} {
+            ia.adder.user.employee.middle_name}' if ia.adder.user.employee.middle_name else fullname_adder
 
         data.append({
 
             'code': f"<a href='/inventories/adds/{ia.id}/'>{ia.code}</a>",
             'date': ia.date,
-            'adder': ia.adder.user.first_name,
+            'adder': fullname_adder,
 
         })
 
