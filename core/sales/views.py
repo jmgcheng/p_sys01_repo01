@@ -342,7 +342,12 @@ def ajx_official_receipt_list(request):
         official_receipts = official_receipts.filter(
 
             Q(code__icontains=search_value) |
-            Q(creator__user__first_name__icontains=search_value)
+            Q(date__icontains=search_value) |
+            Q(creator__user__first_name__icontains=search_value) |
+            Q(creator__user__last_name__icontains=search_value) |
+            Q(creator__user__employee__middle_name__icontains=search_value) |
+            Q(status__name__icontains=search_value)
+
 
         ).distinct()
 
@@ -384,12 +389,16 @@ def ajx_official_receipt_list(request):
     data = []
 
     for ord in official_receipts_page:
+        fullname_creator = f'{ord.creator.user.first_name} {
+            ord.creator.user.last_name}'
+        fullname_creator = f'{fullname_creator} {
+            ord.creator.user.employee.middle_name}' if ord.creator.user.employee.middle_name else fullname_creator
 
         data.append({
 
             'code': f"<a href='/sales/receipts/{ord.id}/'>{ord.code}</a>",
             'date': ord.date,
-            'creator': ord.creator.user.first_name,
+            'creator': fullname_creator,
             'status': ord.status.name if ord.status else '',
 
         })
