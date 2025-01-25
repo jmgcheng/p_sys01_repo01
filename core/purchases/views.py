@@ -7,7 +7,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, F
+from django.db.models import Q, F, Prefetch
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 # from .models import Purchase, PurchaseDetail
@@ -107,8 +107,27 @@ class PurchaseRequestDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Fetch PurchaseRequestDetails for the current header
         context['details'] = PurchaseRequestDetail.objects.filter(
             purchase_request_header=self.object)
+
+        # Fetch PurchaseReceiveHeaders linked to the current PurchaseRequestHeader
+        receive_headers = PurchaseReceiveHeader.objects.filter(
+            purchase_request_header=self.object
+        )
+
+        # Include corresponding PurchaseReceiveDetails for the above headers
+        receive_headers_with_details = receive_headers.prefetch_related(
+            Prefetch(
+                'purchasereceivedetail_set',
+                queryset=PurchaseReceiveDetail.objects.select_related(
+                    'product_variation'),
+                to_attr='receive_details'
+            )
+        )
+        context['receive_headers'] = receive_headers_with_details
+
         return context
 
 
