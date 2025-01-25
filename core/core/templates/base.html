@@ -73,7 +73,7 @@
                       {% endif %}
 
                       {% if perms.employees.view_employee and perms.employees.add_employee and perms.employees.change_employee %}
-                        <li><a class="dropdown-item" href="{% url 'employees:employee-create' %}">Add New</a></li>
+                        <li><a class="dropdown-item" href="{% url 'employees:employee-create' %}">Create</a></li>
                       {% endif %}
                       
                     </ul>
@@ -82,45 +82,49 @@
 
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Inventory
+                      Products
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{% url 'products:product-list' %}">Products</a></li>
-                      <li><a class="dropdown-item" href="{% url 'products:product-create' %}">Add Product</a></li>
-
-                      <li><a class="dropdown-item" href="{% url 'products:product-variation-list' %}">Product Variations</a></li>
-                      <li><a class="dropdown-item" href="{% url 'products:product-variation-create' %}">Add Product Variations</a></li>
-
-                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-add-list' %}">Add List</a></li>
-                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-add-create' %}">Add Create</a></li>
-                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-deduct-list' %}">Deduct List</a></li>
-                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-deduct-create' %}">Deduct Create</a></li>
+                      <li><a class="dropdown-item" href="{% url 'products:product-list' %}">List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'products:product-create' %}">Create</a></li>
+                      <li><a class="dropdown-item" href="{% url 'products:product-variation-list' %}">Variations - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'products:product-variation-create' %}">Variations - Create</a></li>
                     </ul>
                   </li>
 
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Purchase
+                      Inventories
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-request-list' %}">Request - List</a></li>
-                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-request-create' %}">Request - Add</a></li>
+                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-add-list' %}">Manual Add - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-add-create' %}">Manual Add - Create</a></li>
+                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-deduct-list' %}">Manual Deduct - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-deduct-create' %}">Manual Deduct - Create</a></li>
+                    </ul>
+                  </li>
 
-                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-receive-list' %}">Received - List</a></li>
-                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-receive-create' %}">Received - Add</a></li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Purchases
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-request-list' %}">Requests - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-request-create' %}">Requests - Create</a></li>
+                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-receive-list' %}">Receives - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'purchases:purchase-receive-create' %}">Receives - Create</a></li>
                     </ul>
                   </li>
   
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Sale
+                      Sales
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{% url 'sales:sale-invoice-list' %}">Invoice - List</a></li>
-                      <li><a class="dropdown-item" href="{% url 'sales:sale-invoice-create' %}">Invoice - Add</a></li>
-
-                      <li><a class="dropdown-item" href="{% url 'sales:official-receipt-list' %}">Receipt - List</a></li>
-                      <li><a class="dropdown-item" href="{% url 'sales:official-receipt-create' %}">Receipt - Add</a></li>
+                      <li><a class="dropdown-item" href="{% url 'sales:sale-invoice-list' %}">Invoices - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'sales:sale-invoice-create' %}">Invoices - Create</a></li>
+                      <li><a class="dropdown-item" href="{% url 'sales:official-receipt-list' %}">Receipts - List</a></li>
+                      <li><a class="dropdown-item" href="{% url 'sales:official-receipt-create' %}">Receipts - Create</a></li>
                     </ul>
                   </li>
 
