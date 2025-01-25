@@ -56,6 +56,34 @@
                       <th scope="row">Image Url:</th>
                       <td>{{ object.image_url }}</td>
                     </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Inventory Manual Add</th>
+                      <td>{{ annotated_product_variation.quantity_manual_add }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Inventory Manual Deduct</th>
+                      <td>{{ annotated_product_variation.quantity_manual_deduct }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Purchasing</th>
+                      <td>{{ annotated_product_variation.quantity_purchasing }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Purchase Received</th>
+                      <td>{{ annotated_product_variation.quantity_purchasing_receive }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Sales Releasing</th>
+                      <td>{{ annotated_product_variation.quantity_sale_releasing }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">Sold</th>
+                      <td>{{ annotated_product_variation.quantity_sold }}</td>
+                    </tr>
+                    <tr>
+                      <th class="col-3" scope="row">On Hand</th>
+                      <td>{{ annotated_product_variation.quantity_on_hand }}</td>
+                    </tr>                    
                   </table>
                 
                   <div class="text-right">

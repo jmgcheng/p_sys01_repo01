@@ -1,6 +1,6 @@
 # import pandas as pd
 # import os
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
@@ -10,10 +10,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
 from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefetch, TextField
-# from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce
 # from django.contrib.postgres.aggregates import StringAgg
 from products.models import ProductColor, ProductSize, ProductUnit, Product, ProductVariation
 from products.forms import ProductForm, ProductVariationForm
+from inventories.utils import get_quantity_purchasing_subquery, get_quantity_purchasing_receive_subquery, get_quantity_sale_releasing_subquery, get_quantity_sold_subquery, get_quantity_inventory_add_subquery, get_quantity_inventory_deduct_subquery
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 
@@ -76,6 +77,36 @@ class ProductVariationCreateView(LoginRequiredMixin, CreateView):
 class ProductVariationDetailView(LoginRequiredMixin, DetailView):
     model = ProductVariation
     template_name = 'products/product_variation_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product_variation = get_object_or_404(
+            ProductVariation, pk=self.kwargs['pk'])
+
+        # Annotate the object with reusable subqueries
+        product_variation = ProductVariation.objects.filter(pk=product_variation.pk).annotate(
+            quantity_manual_add=Coalesce(
+                get_quantity_inventory_add_subquery(), 0),
+            quantity_manual_deduct=Coalesce(
+                get_quantity_inventory_deduct_subquery(), 0),
+            quantity_purchasing=Coalesce(
+                get_quantity_purchasing_subquery(), 0),
+            quantity_purchasing_receive=Coalesce(
+                get_quantity_purchasing_receive_subquery(), 0),
+            quantity_sale_releasing=Coalesce(
+                get_quantity_sale_releasing_subquery(), 0),
+            quantity_sold=Coalesce(get_quantity_sold_subquery(), 0),
+            quantity_on_hand=(
+                Coalesce(get_quantity_purchasing_receive_subquery(), 0)
+                + Coalesce(get_quantity_inventory_add_subquery(), 0)
+                - Coalesce(get_quantity_inventory_deduct_subquery(), 0)
+                - Coalesce(get_quantity_sold_subquery(), 0)
+            )
+        ).first()
+
+        # Add the annotated object to the context
+        context['annotated_product_variation'] = product_variation
+        return context
 
 
 class ProductVariationUpdateView(LoginRequiredMixin, UpdateView):

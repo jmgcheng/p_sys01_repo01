@@ -17,6 +17,7 @@ from products.models import ProductVariation
 from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseReceiveHeader, PurchaseReceiveDetail, PurchaseReceiveStatus, PurchaseRequestStatus
 from sales.models import SaleInvoiceHeader, SaleInvoiceDetail, SaleInvoiceStatus, OfficialReceiptHeader, OfficialReceiptDetail, OfficialReceiptStatus
 # from .mixins import AdminRequiredMixin
+from inventories.utils import get_quantity_purchasing_subquery, get_quantity_purchasing_receive_subquery, get_quantity_sale_releasing_subquery, get_quantity_sold_subquery, get_quantity_inventory_add_subquery, get_quantity_inventory_deduct_subquery
 from django.views import View
 
 
@@ -248,76 +249,24 @@ def ajx_inventory_list(request):
 
     # filter
 
-    # Subqueries for pre-aggregated values
-    purchase_request_quantity = Subquery(
-        PurchaseRequestDetail.objects.filter(
-            product_variation=OuterRef('pk'),
-            purchase_request_header__status__name="OPEN (PURCHASING)"
-        ).values('product_variation').annotate(
-            total_quantity=Sum('quantity_request')
-        ).values('total_quantity'),
-        output_field=IntegerField()
-    )
-    sale_invoice_quantity = Subquery(
-        SaleInvoiceDetail.objects.filter(
-            product_variation=OuterRef('pk'),
-            sale_invoice_header__status__name="OPEN (FOR PAYMENT)"
-        ).values('product_variation').annotate(
-            total_quantity=Sum('quantity_request')
-        ).values('total_quantity'),
-        output_field=IntegerField()
-    )
-    official_receipt_quantity = Subquery(
-        OfficialReceiptDetail.objects.filter(
-            product_variation=OuterRef('pk'),
-            official_receipt_header__status__name="PAID"
-        ).values('product_variation').annotate(
-            total_quantity=Sum('quantity_paid')
-        ).values('total_quantity'),
-        output_field=IntegerField()
-    )
-    purchase_receive_quantity = Subquery(
-        PurchaseReceiveDetail.objects.filter(
-            product_variation=OuterRef('pk'),
-            purchase_receive_header__status__name__in=[
-                "RECEIVED (NO ISSUE)", "RECEIVED (WITH ISSUE)"]
-        ).values('product_variation').annotate(
-            total_quantity=Sum('quantity_received')
-        ).values('total_quantity'),
-        output_field=IntegerField()
-    )
-    inventory_add_quantity = Subquery(
-        InventoryAddDetail.objects.filter(
-            product_variation=OuterRef('pk')
-        ).values('product_variation').annotate(
-            total_quantity=Sum('quantity_added')
-        ).values('total_quantity'),
-        output_field=IntegerField()
-    )
-    inventory_deduct_quantity = Subquery(
-        InventoryDeductDetail.objects.filter(
-            product_variation=OuterRef('pk')
-        ).values('product_variation').annotate(
-            total_quantity=Sum('quantity_deducted')
-        ).values('total_quantity'),
-        output_field=IntegerField()
-    )
-
     # annotate
     product_variations = product_variations.annotate(
-        quantity_manual_add_annotated=Coalesce(inventory_add_quantity, 0),
+        quantity_manual_add_annotated=Coalesce(
+            get_quantity_inventory_add_subquery(), 0),
         quantity_manual_deduct_annotated=Coalesce(
-            inventory_deduct_quantity, 0),
-        quantity_purchasing_annotated=Coalesce(purchase_request_quantity, 0),
+            get_quantity_inventory_deduct_subquery(), 0),
+        quantity_purchasing_annotated=Coalesce(
+            get_quantity_purchasing_subquery(), 0),
         quantity_purchasing_receive_annotated=Coalesce(
-            purchase_receive_quantity, 0),
-        quantity_sale_releasing_annotated=Coalesce(sale_invoice_quantity, 0),
-        quantity_sold_annotated=Coalesce(official_receipt_quantity, 0),
+            get_quantity_purchasing_receive_subquery(), 0),
+        quantity_sale_releasing_annotated=Coalesce(
+            get_quantity_sale_releasing_subquery(), 0),
+        quantity_sold_annotated=Coalesce(get_quantity_sold_subquery(), 0),
         quantity_on_hand_annotated=(
-            Coalesce(purchase_receive_quantity, 0)
-            + Coalesce(inventory_add_quantity, 0)
-            - Coalesce(inventory_deduct_quantity, 0)
-            - Coalesce(official_receipt_quantity, 0)
+            Coalesce(get_quantity_purchasing_receive_subquery(), 0)
+            + Coalesce(get_quantity_inventory_add_subquery(), 0)
+            - Coalesce(get_quantity_inventory_deduct_subquery(), 0)
+            - Coalesce(get_quantity_sold_subquery(), 0)
         )
     )
 
