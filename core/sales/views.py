@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, F
+from django.db.models import Q, F, Prefetch
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 # from .models import Purchase, PurchaseDetail
@@ -104,8 +104,26 @@ class SaleInvoiceDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Fetch SaleInvoiceDetails for the current header
         context['details'] = SaleInvoiceDetail.objects.filter(
             sale_invoice_header=self.object)
+
+        # Fetch OfficialReceiptHeaders linked to the current SaleInvoiceHeader
+        receipt_headers = OfficialReceiptHeader.objects.filter(
+            sale_invoice_header=self.object)
+
+        # Include corresponding OfficialReceiptDetails for the above headers
+        receipt_headers_with_details = receipt_headers.prefetch_related(
+            Prefetch(
+                'officialreceiptdetail_set',
+                queryset=OfficialReceiptDetail.objects.select_related(
+                    'product_variation'),
+                to_attr='receipt_details'
+            )
+        )
+        context['receipt_headers'] = receipt_headers_with_details
+
         return context
 
 
