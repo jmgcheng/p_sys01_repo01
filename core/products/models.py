@@ -73,3 +73,24 @@ class ProductVariation(models.Model):
         self.description = sanitizer.sanitize(self.description)
 
         super().save(*args, **kwargs)
+
+    def quantity_manual_add(self):
+        return getattr(self, "quantity_manual_add_annotated", 0)
+
+    def quantity_manual_deduct(self):
+        return getattr(self, "quantity_manual_deduct_annotated", 0)
+
+    def quantity_purchasing(self):
+        return getattr(self, "quantity_purchasing_annotated", 0)
+
+    def quantity_purchasing_receive(self):
+        return getattr(self, "quantity_purchasing_receive_annotated", 0)
+
+    def quantity_sale_releasing(self):
+        return getattr(self, "quantity_sale_releasing_annotated", 0)
+
+    def quantity_sold(self):
+        return getattr(self, "quantity_sold_annotated", 0)
+
+    def quantity_on_hand(self):
+        return getattr(self, "quantity_on_hand_annotated", 0)

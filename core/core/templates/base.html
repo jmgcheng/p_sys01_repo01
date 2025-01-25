@@ -97,6 +97,7 @@
                       Inventories
                     </a>
                     <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'inventories:inventory-list' %}">Summary</a></li>
                       <li><a class="dropdown-item" href="{% url 'inventories:inventory-add-list' %}">Manual Add - List</a></li>
                       <li><a class="dropdown-item" href="{% url 'inventories:inventory-add-create' %}">Manual Add - Create</a></li>
                       <li><a class="dropdown-item" href="{% url 'inventories:inventory-deduct-list' %}">Manual Deduct - List</a></li>

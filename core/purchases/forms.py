@@ -10,7 +10,7 @@ class PurchaseRequestHeaderForm(forms.ModelForm):
     class Meta:
         model = PurchaseRequestHeader
         # fields = ['code', 'date', 'requestor', 'status']
-        fields = ['code', 'date', 'vendor']
+        fields = ['code', 'date', 'vendor', 'status']
 
     def clean(self):
         cleaned_data = super().clean()

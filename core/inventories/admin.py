@@ -1,3 +1,7 @@
 from django.contrib import admin
+from inventories.models import InventoryAddHeader, InventoryAddDetail, InventoryDeductHeader, InventoryDeductDetail
 
-# Register your models here.
+admin.site.register(InventoryAddHeader)
+admin.site.register(InventoryAddDetail)
+admin.site.register(InventoryDeductHeader)
+admin.site.register(InventoryDeductDetail)

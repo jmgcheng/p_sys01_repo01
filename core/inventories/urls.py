@@ -1,5 +1,5 @@
 from django.urls import path
-from inventories.views import InventoryAddCreateView, InventoryAddUpdateView, InventoryAddDetailView, InventoryAddListView, InventoryDeductCreateView, InventoryDeductUpdateView, InventoryDeductDetailView, InventoryDeductListView, ajx_inventory_add_list, ajx_inventory_deduct_list
+from inventories.views import InventoryListView, InventoryAddCreateView, InventoryAddUpdateView, InventoryAddDetailView, InventoryAddListView, InventoryDeductCreateView, InventoryDeductUpdateView, InventoryDeductDetailView, InventoryDeductListView, ajx_inventory_list, ajx_inventory_add_list, ajx_inventory_deduct_list
 
 app_name = 'inventories'
 
@@ -29,10 +29,14 @@ urlpatterns = [
     path('deducts/', InventoryDeductListView.as_view(),
          name='inventory-deduct-list'),
 
+    path('ajx_inventory_list/', ajx_inventory_list, name='ajx_inventory_list'),
+
     path('adds/ajx_inventory_add_list/',
          ajx_inventory_add_list, name='ajx_inventory_add_list'),
 
     path('deducts/ajx_inventory_deduct_list/',
          ajx_inventory_deduct_list, name='ajx_inventory_deduct_list'),
+
+    path('', InventoryListView.as_view(), name='inventory-list'),
 
 ]

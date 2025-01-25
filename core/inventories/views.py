@@ -6,11 +6,16 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, F
+from django.db import models
+from django.db.models import Sum, Case, When, F, IntegerField, OuterRef, Subquery
+from django.db.models.functions import Coalesce
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from inventories.models import InventoryAddHeader, InventoryAddDetail, InventoryDeductHeader, InventoryDeductDetail
 from inventories.forms import InventoryAddHeaderForm, InventoryAddDetailForm, InventoryAddInlineFormSet, InventoryAddInlineFormSetNoExtra, InventoryDeductHeaderForm, InventoryDeductDetailForm, InventoryDeductInlineFormSet, InventoryDeductInlineFormSetNoExtra
+from products.models import ProductVariation
+from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseReceiveHeader, PurchaseReceiveDetail, PurchaseReceiveStatus, PurchaseRequestStatus
+from sales.models import SaleInvoiceHeader, SaleInvoiceDetail, SaleInvoiceStatus, OfficialReceiptHeader, OfficialReceiptDetail, OfficialReceiptStatus
 # from .mixins import AdminRequiredMixin
 from django.views import View
 
@@ -207,6 +212,172 @@ class InventoryDeductDetailView(LoginRequiredMixin, DetailView):
 class InventoryDeductListView(LoginRequiredMixin, ListView):
     model = InventoryDeductHeader
     template_name = 'inventories/inventory_deduct_list.html'
+
+
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+
+class InventoryListView(LoginRequiredMixin, ListView):
+    model = ProductVariation
+    template_name = 'inventories/inventory_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+
+@login_required
+def ajx_inventory_list(request):
+
+    draw = int(request.GET.get('draw', 1))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))
+    search_value = request.GET.get('search[value]', '')
+
+    #
+    product_variations = ProductVariation.objects.all()
+
+    if search_value:
+        product_variations = product_variations.filter(
+            Q(code__icontains=search_value) |
+            Q(product__name__icontains=search_value) |
+            Q(name__icontains=search_value)
+        ).distinct()
+
+    # filter
+
+    # Subqueries for pre-aggregated values
+    purchase_request_quantity = Subquery(
+        PurchaseRequestDetail.objects.filter(
+            product_variation=OuterRef('pk'),
+            purchase_request_header__status__name="OPEN (PURCHASING)"
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_request')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+    sale_invoice_quantity = Subquery(
+        SaleInvoiceDetail.objects.filter(
+            product_variation=OuterRef('pk'),
+            sale_invoice_header__status__name="OPEN (FOR PAYMENT)"
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_request')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+    official_receipt_quantity = Subquery(
+        OfficialReceiptDetail.objects.filter(
+            product_variation=OuterRef('pk'),
+            official_receipt_header__status__name="PAID"
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_paid')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+    purchase_receive_quantity = Subquery(
+        PurchaseReceiveDetail.objects.filter(
+            product_variation=OuterRef('pk'),
+            purchase_receive_header__status__name__in=[
+                "RECEIVED (NO ISSUE)", "RECEIVED (WITH ISSUE)"]
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_received')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+    inventory_add_quantity = Subquery(
+        InventoryAddDetail.objects.filter(
+            product_variation=OuterRef('pk')
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_added')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+    inventory_deduct_quantity = Subquery(
+        InventoryDeductDetail.objects.filter(
+            product_variation=OuterRef('pk')
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_deducted')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+
+    # annotate
+    product_variations = product_variations.annotate(
+        quantity_manual_add_annotated=Coalesce(inventory_add_quantity, 0),
+        quantity_manual_deduct_annotated=Coalesce(
+            inventory_deduct_quantity, 0),
+        quantity_purchasing_annotated=Coalesce(purchase_request_quantity, 0),
+        quantity_purchasing_receive_annotated=Coalesce(
+            purchase_receive_quantity, 0),
+        quantity_sale_releasing_annotated=Coalesce(sale_invoice_quantity, 0),
+        quantity_sold_annotated=Coalesce(official_receipt_quantity, 0),
+        quantity_on_hand_annotated=(
+            Coalesce(purchase_receive_quantity, 0)
+            + Coalesce(inventory_add_quantity, 0)
+            - Coalesce(inventory_deduct_quantity, 0)
+            - Coalesce(official_receipt_quantity, 0)
+        )
+    )
+
+    # Handle ordering
+    order_column_index = int(request.GET.get('order[0][column]', 0))
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+    order_column = request.GET.get(
+        f'columns[{order_column_index}][data]', 'id')
+
+    if order_column == 'product':
+        order_column = 'product__name'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    else:
+        if order_direction == 'desc':
+            order_column = f'-{order_column}'
+        product_variations = product_variations.order_by(order_column)
+
+    #
+    product_variations = product_variations.select_related('product')
+
+    paginator = Paginator(product_variations, length)
+    total_records = paginator.count
+    product_variations_page = paginator.get_page(start // length + 1)
+
+    #
+    data = []
+
+    for pv in product_variations_page:
+
+        data.append({
+            'code': f"<a href='/products/variations/{pv.id}/'>{pv.code}</a>",
+            'name': pv.name,
+            'product': pv.product.name if pv.product.name else '',
+            'qty_manual_add': pv.quantity_manual_add(),
+            'qty_manual_deduct': pv.quantity_manual_deduct(),
+            'qty_purchasing': pv.quantity_purchasing(),
+            'qty_purchasing_receive': pv.quantity_purchasing_receive(),
+            'qty_sale_releasing': pv.quantity_sale_releasing(),
+            'qty_sold': pv.quantity_sold(),
+            'qty_on_hand': pv.quantity_on_hand(),
+        })
+
+    response = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': total_records,
+        'data': data
+    }
+
+    return JsonResponse(response)
+
+
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
 
 
 @login_required
