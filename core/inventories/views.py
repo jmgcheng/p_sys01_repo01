@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db import models
-from django.db.models import Sum, Case, When, F, IntegerField, OuterRef, Subquery
+from django.db.models import Sum, Case, When, F, Q, IntegerField, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -215,10 +215,6 @@ class InventoryDeductListView(LoginRequiredMixin, ListView):
     template_name = 'inventories/inventory_deduct_list.html'
 
 
-# ----------------------------------------------------------
-# ----------------------------------------------------------
-# ----------------------------------------------------------
-
 class InventoryListView(LoginRequiredMixin, ListView):
     model = ProductVariation
     template_name = 'inventories/inventory_list.html'
@@ -284,6 +280,62 @@ def ajx_inventory_list(request):
         else:
             product_variations = product_variations.order_by(
                 F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_manual_add':
+        order_column = 'quantity_manual_add_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_manual_deduct':
+        order_column = 'quantity_manual_deduct_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_purchasing':
+        order_column = 'quantity_purchasing_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_purchasing_receive':
+        order_column = 'quantity_purchasing_receive_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_sale_releasing':
+        order_column = 'quantity_sale_releasing_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_sold':
+        order_column = 'quantity_sold_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
+    elif order_column == 'qty_on_hand':
+        order_column = 'quantity_on_hand_annotated'
+        if order_direction == 'desc':
+            product_variations = product_variations.order_by(
+                F(order_column).desc(nulls_last=True))
+        else:
+            product_variations = product_variations.order_by(
+                F(order_column).asc(nulls_last=True))
     else:
         if order_direction == 'desc':
             order_column = f'-{order_column}'
@@ -322,11 +374,6 @@ def ajx_inventory_list(request):
     }
 
     return JsonResponse(response)
-
-
-# ----------------------------------------------------------
-# ----------------------------------------------------------
-# ----------------------------------------------------------
 
 
 @login_required
