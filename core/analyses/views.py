@@ -6,13 +6,14 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 # from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, F, Prefetch, Count, Case, When, Value, IntegerField
+from django.db.models import Q, F, Prefetch, Count, Case, When, Value, IntegerField, Sum
 from django.db.models.functions import Coalesce
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 # from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
 from employees.models import Employee
 from products.models import ProductVariation
+from sales.models import SaleInvoiceDetail, SaleInvoiceCategory
 # from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 from inventories.utils import get_quantity_purchase_request_subquery, get_quantity_purchase_receive_subquery, get_quantity_sale_invoice_subquery, get_quantity_official_receipt_subquery
 # from .mixins import AdminRequiredMixin
@@ -131,8 +132,82 @@ def ajx_top_products(request):
 
 
 def ajx_sales_breakdown_category(request):
+    # Annotate totals for each category and overall
+    product_variations = SaleInvoiceDetail.objects.values(
+        'product_variation__name'
+    ).annotate(
+        retail=Coalesce(
+            Sum(
+                Case(
+                    When(sale_invoice_header__category__name='RETAIL',
+                         then='quantity_request'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ),
+            Value(0),
+        ),
+        patient=Coalesce(
+            Sum(
+                Case(
+                    When(sale_invoice_header__category__name='PATIENT',
+                         then='quantity_request'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ),
+            Value(0),
+        ),
+        wholesale=Coalesce(
+            Sum(
+                Case(
+                    When(sale_invoice_header__category__name='WHOLESALE',
+                         then='quantity_request'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ),
+            Value(0),
+        ),
+        government=Coalesce(
+            Sum(
+                Case(
+                    When(sale_invoice_header__category__name='GOVERNMENT',
+                         then='quantity_request'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ),
+            Value(0),
+        ),
+        corporate=Coalesce(
+            Sum(
+                Case(
+                    When(sale_invoice_header__category__name='CORPORATE',
+                         then='quantity_request'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ),
+            Value(0),
+        ),
+        grand_total=Coalesce(Sum('quantity_request'), Value(0)),
+    )
 
+    # Format results for DataTables
     results = []
+    for pv in product_variations:
+        grand_total = pv['grand_total']
+        formatted_row = {
+            'product_variation': pv['product_variation__name'],
+            'retail': f"{pv['retail']} ({(pv['retail'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'patient': f"{pv['patient']} ({(pv['patient'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'wholesale': f"{pv['wholesale']} ({(pv['wholesale'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'government': f"{pv['government']} ({(pv['government'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'corporate': f"{pv['corporate']} ({(pv['corporate'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'grand_total': f"{grand_total} (100%)" if grand_total else "0 (0%)",
+        }
+        results.append(formatted_row)
 
     return JsonResponse({'data': results})
 
