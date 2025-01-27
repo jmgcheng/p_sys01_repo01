@@ -22,7 +22,7 @@ def get_quantity_purchasing_receive_subquery():
         PurchaseReceiveDetail.objects.filter(
             product_variation=OuterRef('pk'),
             purchase_receive_header__status__name__in=[
-                "RECEIVED (NO ISSUE)", "RECEIVED (WITH ISSUE)"
+                "RECEIVED (NO ISSUE)", "RECEIVED (WITH ISSUE)", "CLOSED"
             ]
         ).values('product_variation').annotate(
             total_quantity=Sum('quantity_received')
@@ -72,6 +72,50 @@ def get_quantity_inventory_deduct_subquery():
             product_variation=OuterRef('pk')
         ).values('product_variation').annotate(
             total_quantity=Sum('quantity_deducted')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+
+
+def get_quantity_purchase_request_subquery():
+    return Subquery(
+        PurchaseRequestDetail.objects.filter(
+            product_variation=OuterRef('pk')
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_request')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+
+
+def get_quantity_purchase_receive_subquery():
+    return Subquery(
+        PurchaseReceiveDetail.objects.filter(
+            product_variation=OuterRef('pk')
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_received')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+
+
+def get_quantity_sale_invoice_subquery():
+    return Subquery(
+        SaleInvoiceDetail.objects.filter(
+            product_variation=OuterRef('pk')
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_request')
+        ).values('total_quantity'),
+        output_field=IntegerField()
+    )
+
+
+def get_quantity_official_receipt_subquery():
+    return Subquery(
+        OfficialReceiptDetail.objects.filter(
+            product_variation=OuterRef('pk')
+        ).values('product_variation').annotate(
+            total_quantity=Sum('quantity_paid')
         ).values('total_quantity'),
         output_field=IntegerField()
     )

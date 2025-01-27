@@ -7,11 +7,14 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Prefetch, Count, Case, When, Value, IntegerField
+from django.db.models.functions import Coalesce
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 # from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
 from employees.models import Employee
+from products.models import ProductVariation
 # from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
+from inventories.utils import get_quantity_purchase_request_subquery, get_quantity_purchase_receive_subquery, get_quantity_sale_invoice_subquery, get_quantity_official_receipt_subquery
 # from .mixins import AdminRequiredMixin
 from django.views import View
 
@@ -87,7 +90,42 @@ def ajx_employee_demographics_age(request):
 
 def ajx_top_products(request):
 
+    #
+    product_variations = ProductVariation.objects.all()
+
+    #
+    product_variations = product_variations.annotate(
+        purchase_requested=Coalesce(
+            get_quantity_purchase_request_subquery(), 0),
+        purchase_received=Coalesce(
+            get_quantity_purchase_receive_subquery(), 0),
+        sale_invoice=Coalesce(get_quantity_sale_invoice_subquery(), 0),
+        official_receipt=Coalesce(get_quantity_official_receipt_subquery(), 0),
+        product_name=F('product__name'),
+    ).values(
+        'name',
+        'product_name',
+        'purchase_requested',
+        'purchase_received',
+        'sale_invoice',
+        'official_receipt',
+    )
+
+    #
     results = []
+
+    # Format data for DataTables
+    results = [
+        {
+            'product_variation': pv['name'],
+            'product': pv['product_name'],
+            'purchase_requested': pv['purchase_requested'],
+            'purchase_received': pv['purchase_received'],
+            'sale_invoice': pv['sale_invoice'],
+            'official_receipt': pv['official_receipt'],
+        }
+        for pv in product_variations
+    ]
 
     return JsonResponse({'data': results})
 
