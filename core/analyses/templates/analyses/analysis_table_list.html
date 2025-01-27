@@ -24,13 +24,37 @@
         
         <div class="accordion-item">
           <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseED" >
-              Employee Demographics
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEDA" >
+              Employee Demographics - Age
             </button>
           </h2>
-          <div id="collapseED" class="accordion-collapse collapse show" data-bs-parent="#accordionDataTables">
+          <div id="collapseEDA" class="accordion-collapse collapse show" data-bs-parent="#accordionDataTables">
             <div class="accordion-body">
-              <table id="tableEmployeeDemographics" class="display nowrap" style="width: 100%">
+              <table id="tableEmployeeDemographicsAge" class="table table-sm table-striped table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th>Age</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Grand Total</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTP" >
+              Top Products
+            </button>
+          </h2>
+          <div id="collapseTP" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
+            <div class="accordion-body">
+              <table id="tableTopProducts" class="table table-sm table-striped table-hover" style="width: 100%">
                 <thead>
                   <tr>
                     <th>Col 01</th>
@@ -46,35 +70,13 @@
         
         <div class="accordion-item">
           <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTRI" >
-              Top Requested Items
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSBC" >
+              Sales Breakdown - Category
             </button>
           </h2>
-          <div id="collapseTRI" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
+          <div id="collapseSBC" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
             <div class="accordion-body">
-              <table id="tableTopRequestedItems" class="display nowrap" style="width: 100%">
-                <thead>
-                  <tr>
-                    <th>Col 01</th>
-                    <th>Col 02</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSB" >
-              Sales Breakdown
-            </button>
-          </h2>
-          <div id="collapseSB" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
-            <div class="accordion-body">
-              <table id="tableSalesBreakdown" class="display nowrap" style="width: 100%">
+              <table id="tableSalesBreakdownCategory" class="table table-sm table-striped table-hover" style="width: 100%">
                 <thead>
                   <tr>
                     <th>Col 01</th>
@@ -88,7 +90,7 @@
         </div>
 
 
-        <div class="accordion-item">
+        <!-- <div class="accordion-item">
           <h2 class="accordion-header">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTSV" >
               Top Selling Variations
@@ -96,7 +98,7 @@
           </h2>
           <div id="collapseTSV" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
             <div class="accordion-body">
-              <table id="tableTopSellingVariations" class="display nowrap" style="width: 100%">
+              <table id="tableTopSellingVariations" class="table table-sm table-striped table-hover" style="width: 100%">
                 <thead>
                   <tr>
                     <th>Col 01</th>
@@ -118,7 +120,7 @@
           </h2>
           <div id="collapseMSVP" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
             <div class="accordion-body">
-              <table id="tableMonthlySalesVsPurchases" class="display nowrap" style="width: 100%">
+              <table id="tableMonthlySalesVsPurchases" class="table table-sm table-striped table-hover" style="width: 100%">
                 <thead>
                   <tr>
                     <th>Col 01</th>
@@ -140,7 +142,7 @@
           </h2>
           <div id="collapseRPS" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
             <div class="accordion-body">
-              <table id="tableReceiptsPaymentStatus" class="display nowrap" style="width: 100%">
+              <table id="tableReceiptsPaymentStatus" class="table table-sm table-striped table-hover" style="width: 100%">
                 <thead>
                   <tr>
                     <th>Col 01</th>
@@ -162,7 +164,7 @@
           </h2>
           <div id="collapsePP" class="accordion-collapse collapse" data-bs-parent="#accordionDataTables">
             <div class="accordion-body">
-              <table id="tablePatientPurchases" class="display nowrap" style="width: 100%">
+              <table id="tablePatientPurchases" class="table table-sm table-striped table-hover" style="width: 100%">
                 <thead>
                   <tr>
                     <th>Col 01</th>
@@ -173,7 +175,7 @@
               </table>
             </div>
           </div>
-        </div>
+        </div> -->
 
 
       </div>
