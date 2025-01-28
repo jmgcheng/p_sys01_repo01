@@ -1,4 +1,5 @@
 from datetime import date
+from collections import defaultdict
 from django.shortcuts import redirect, render
 # from django.core.exceptions import PermissionDenied
 # from django.core.paginator import Paginator
@@ -237,6 +238,7 @@ def ajx_sales_breakdown_category(request):
 
 
 def ajx_chart_employee_demographics_age(request):
+
     # Define age ranges
     age_ranges = {
         "18-23": (18, 23),
@@ -255,21 +257,31 @@ def ajx_chart_employee_demographics_age(request):
         birth_date__isnull=False,
     )
 
-    # Calculate age distribution
+    # Calculate age and gender distribution
     today = date.today()
-    age_distribution = {key: 0 for key in age_ranges.keys()}
+    age_gender_distribution = defaultdict(lambda: {"MALE": 0, "FEMALE": 0})
+
     for employee in employees:
         age = today.year - employee.birth_date.year - \
             ((today.month, today.day) <
              (employee.birth_date.month, employee.birth_date.day))
+        gender = employee.gender.upper()
         for range_name, (min_age, max_age) in age_ranges.items():
             if min_age <= age <= max_age:
-                age_distribution[range_name] += 1
+                age_gender_distribution[range_name][gender] += 1
                 break
 
     # Prepare data for the chart
+    labels = list(age_ranges.keys())
+    male_data = [age_gender_distribution[label]["MALE"] for label in labels]
+    female_data = [age_gender_distribution[label]["FEMALE"]
+                   for label in labels]
+
     response_data = {
-        "labels": list(age_distribution.keys()),
-        "data": list(age_distribution.values()),
+        "labels": labels,
+        "datasets": [
+            {"label": "Male", "data": male_data, "backgroundColor": "#36A2EB"},
+            {"label": "Female", "data": female_data, "backgroundColor": "#FF6384"},
+        ],
     }
     return JsonResponse(response_data)
