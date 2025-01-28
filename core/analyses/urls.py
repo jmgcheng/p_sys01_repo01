@@ -1,10 +1,12 @@
 from django.urls import path
-from analyses.views import AnalysisTableListView, ajx_employee_demographics_age, ajx_top_products, ajx_sales_breakdown_category
+from analyses.views import AnalysisTableListView, AnalysisChartListView, ajx_employee_demographics_age, ajx_top_products, ajx_sales_breakdown_category, ajx_chart_employee_demographics_age
 
 app_name = 'analyses'
 
 urlpatterns = [
     path('tables/', AnalysisTableListView.as_view(), name='analysis-table-list'),
+
+    path('charts/', AnalysisChartListView.as_view(), name='analysis-chart-list'),
 
     path('ajx_employee_demographics_age/', ajx_employee_demographics_age,
          name='ajx_employee_demographics_age'),
@@ -21,6 +23,10 @@ urlpatterns = [
     #      name='ajx_receipts_payment_status'),
     # path('ajx_patient_purchases/', ajx_patient_purchases,
     #      name='ajx_patient_purchases'),
+
+
+    path('ajx_chart_employee_demographics_age/', ajx_chart_employee_demographics_age,
+         name='ajx_chart_employee_demographics_age'),
 
     # path('', EmployeeListView.as_view(), name='employee-list'),
 ]

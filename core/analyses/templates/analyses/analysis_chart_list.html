@@ -1,0 +1,59 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block title %}Employee List{% endblock %} 
+{% block styles_bmain %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/rg-1.5.1/rr-1.5.0/sc-2.4.3/datatables.min.css" rel="stylesheet">
+{% endblock %} 
+{% block styles %} 
+{% endblock %} 
+{% block content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Data Charts</h1>
+  </div>
+
+  <!-- Content Row -->
+  <div class="row">
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Employee Demographics - Age</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="employeeDemographicsAge" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Nationality Office Headcount</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="nationalityOfficeHeadcountChart" width="400" height="400"></canvas>
+            </div>
+        </div>            
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %} 
+{% block scripts_bmain %}
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+{% endblock %} 
+{% block scripts %}
+<script src="{% static 'js/analysis_chart_list.js' %}"></script>
+{% endblock %}

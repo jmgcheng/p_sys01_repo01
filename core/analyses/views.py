@@ -24,6 +24,10 @@ class AnalysisTableListView(LoginRequiredMixin, TemplateView):
     template_name = "analyses/analysis_table_list.html"
 
 
+class AnalysisChartListView(LoginRequiredMixin, TemplateView):
+    template_name = "analyses/analysis_chart_list.html"
+
+
 def get_age(birth_date):
     today = date.today()
     return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
@@ -230,3 +234,42 @@ def ajx_sales_breakdown_category(request):
 # def ajx_patient_purchases(request):
 #     results = []
 #     return JsonResponse({'data': results})
+
+
+def ajx_chart_employee_demographics_age(request):
+    # Define age ranges
+    age_ranges = {
+        "18-23": (18, 23),
+        "24-29": (24, 29),
+        "30-39": (30, 39),
+        "40-49": (40, 49),
+        "50-57": (50, 57),
+        "58-64": (58, 64),
+        "65-100": (65, 100),
+    }
+
+    # Query eligible employees
+    employees = Employee.objects.filter(
+        status__name__in=["PROBATION", "REGULAR"],
+        user__is_superuser=False,
+        birth_date__isnull=False,
+    )
+
+    # Calculate age distribution
+    today = date.today()
+    age_distribution = {key: 0 for key in age_ranges.keys()}
+    for employee in employees:
+        age = today.year - employee.birth_date.year - \
+            ((today.month, today.day) <
+             (employee.birth_date.month, employee.birth_date.day))
+        for range_name, (min_age, max_age) in age_ranges.items():
+            if min_age <= age <= max_age:
+                age_distribution[range_name] += 1
+                break
+
+    # Prepare data for the chart
+    response_data = {
+        "labels": list(age_distribution.keys()),
+        "data": list(age_distribution.values()),
+    }
+    return JsonResponse(response_data)
