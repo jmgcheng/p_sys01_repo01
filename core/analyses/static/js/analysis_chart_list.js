@@ -43,42 +43,76 @@ $(document).ready(function() {
         .catch(error => console.error("Error fetching age demographics data:", error));
 
 
-        const ctx2 = document.getElementById('topProductVariation').getContext('2d');
-        fetch("/analyses/ajx_chart_top_products/")
-            .then(response => response.json())
-            .then(data => {
-                new Chart(ctx2, {
-                    type: "line",
-                    data: {
-                        labels: data.labels,
-                        datasets: data.datasets,
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            xAxes: [
-                                {
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: "Months",
-                                    },
+    const ctx2 = document.getElementById('topProductVariation').getContext('2d');
+    fetch("/analyses/ajx_chart_top_products/")
+        .then(response => response.json())
+        .then(data => {
+            new Chart(ctx2, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: data.datasets,
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        xAxes: [
+                            {
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: "Months",
                                 },
-                            ],
-                            yAxes: [
-                                {
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: "Quantity",
-                                    },
+                            },
+                        ],
+                        yAxes: [
+                            {
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: "Quantity",
                                 },
-                            ],
+                            },
+                        ],
+                    },
+                    title: {
+                        display: true,
+                        text: "Top Product Variation - Monthly Trends",
+                    },
+                },
+            });
+        })
+        .catch(error => console.error("Error fetching top product data:", error));
+
+    const ctx3 = document.getElementById('salesBreakdownCategory').getContext('2d');
+    fetch("/analyses/ajx_chart_sales_breakdown_category/")
+        .then((response) => response.json())
+        .then((data) => {
+            new Chart(ctx3, {
+                type: "pie",
+                data: {
+                    labels: data.labels,
+                    datasets: data.datasets,
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: "top",
                         },
-                        title: {
-                            display: true,
-                            text: "Top Product Variation - Monthly Trends",
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const dataset = tooltipItem.dataset;
+                                    const value = dataset.data[tooltipItem.dataIndex];
+                                    const total = dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(2);
+                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                },
+                            },
                         },
                     },
-                });
-            })
-            .catch(error => console.error("Error fetching top product data:", error));
+                },
+            });
+        })
+        .catch((error) => console.error("Error fetching sales breakdown data:", error));
+
 });

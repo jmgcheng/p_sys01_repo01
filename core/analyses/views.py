@@ -367,3 +367,32 @@ def ajx_chart_top_products(request):
 
     response_data = {"labels": labels, "datasets": datasets}
     return JsonResponse(response_data)
+
+
+def ajx_chart_sales_breakdown_category(request):
+    # Aggregate sales data by category
+    category_data = SaleInvoiceHeader.objects.values("category__name").annotate(
+        total_sales=Sum("saleinvoicedetail__quantity_request")
+    )
+
+    # Prepare data for the pie chart
+    labels = [entry["category__name"] for entry in category_data]
+    data = [entry["total_sales"] for entry in category_data]
+
+    response_data = {
+        "labels": labels,
+        "datasets": [
+            {
+                "data": data,
+                "backgroundColor": [
+                    "#FF6384",  # Color for RETAIL
+                    "#36A2EB",  # Color for PATIENT
+                    "#FFCE56",  # Color for WHOLESALE
+                    "#4BC0C0",  # Color for GOVERNMENT
+                    "#9966FF",  # Color for CORPORATE
+                ],
+            }
+        ],
+    }
+
+    return JsonResponse(response_data)
