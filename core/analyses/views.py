@@ -1,6 +1,8 @@
 from datetime import date
+from django.utils.timezone import now
 from collections import defaultdict
 from django.shortcuts import redirect, render
+from django.db.models.functions import ExtractMonth
 # from django.core.exceptions import PermissionDenied
 # from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
@@ -14,7 +16,8 @@ from django.urls import reverse_lazy
 # from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
 from employees.models import Employee
 from products.models import ProductVariation
-from sales.models import SaleInvoiceDetail, SaleInvoiceCategory
+from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseReceiveHeader, PurchaseReceiveDetail
+from sales.models import SaleInvoiceHeader, SaleInvoiceDetail, SaleInvoiceCategory, OfficialReceiptHeader, OfficialReceiptDetail
 # from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 from inventories.utils import get_quantity_purchase_request_subquery, get_quantity_purchase_receive_subquery, get_quantity_sale_invoice_subquery, get_quantity_official_receipt_subquery
 # from .mixins import AdminRequiredMixin
@@ -284,4 +287,83 @@ def ajx_chart_employee_demographics_age(request):
             {"label": "Female", "data": female_data, "backgroundColor": "#FF6384"},
         ],
     }
+    return JsonResponse(response_data)
+
+
+def ajx_chart_top_products(request):
+    # Get the current year
+    current_year = now().year
+    months = ["January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"]
+
+    # Identify the most popular product variation
+    top_variation = ProductVariation.objects.annotate(
+        total_request=get_quantity_purchase_request_subquery(),
+        total_receive=get_quantity_purchase_receive_subquery(),
+        total_sale=get_quantity_sale_invoice_subquery(),
+        total_receipt=get_quantity_official_receipt_subquery(),
+    ).annotate(
+        total_transactions=Sum(
+            F("total_request") + F("total_receive") +
+            F("total_sale") + F("total_receipt")
+        )
+    ).order_by("total_transactions").first()  # -total_transactions
+
+    # If no product variation found, return empty data
+    if not top_variation:
+        return JsonResponse({"labels": months, "datasets": []})
+
+    # Fetch monthly quantities for the top product variation
+    def get_monthly_data(detail_model, header_relation, header_model, field_name):
+        monthly_data = detail_model.objects.filter(
+            product_variation=top_variation,
+            **{f"{header_relation}__date__year": current_year}
+        ).annotate(month=ExtractMonth(f"{header_relation}__date")).values("month").annotate(
+            total_quantity=Sum(field_name)
+        )
+        return {entry["month"]: entry["total_quantity"] for entry in monthly_data}
+
+    purchase_request_data = get_monthly_data(
+        PurchaseRequestDetail, "purchase_request_header", PurchaseRequestHeader, "quantity_request"
+    )
+    purchase_receive_data = get_monthly_data(
+        PurchaseReceiveDetail, "purchase_receive_header", PurchaseReceiveHeader, "quantity_received"
+    )
+    sale_invoice_data = get_monthly_data(
+        SaleInvoiceDetail, "sale_invoice_header", SaleInvoiceHeader, "quantity_request"
+    )
+    official_receipt_data = get_monthly_data(
+        OfficialReceiptDetail, "official_receipt_header", OfficialReceiptHeader, "quantity_paid"
+    )
+
+    # Prepare dataset for the chart
+    labels = months
+    datasets = [
+        {
+            "label": "Purchase Requests",
+            "data": [purchase_request_data.get(i + 1, 0) for i in range(12)],
+            "borderColor": "#36A2EB",
+            "fill": False,
+        },
+        {
+            "label": "Purchase Receives",
+            "data": [purchase_receive_data.get(i + 1, 0) for i in range(12)],
+            "borderColor": "#FF6384",
+            "fill": False,
+        },
+        {
+            "label": "Sales",
+            "data": [sale_invoice_data.get(i + 1, 0) for i in range(12)],
+            "borderColor": "#FFCE56",
+            "fill": False,
+        },
+        {
+            "label": "Official Receipts",
+            "data": [official_receipt_data.get(i + 1, 0) for i in range(12)],
+            "borderColor": "#4BC0C0",
+            "fill": False,
+        },
+    ]
+
+    response_data = {"labels": labels, "datasets": datasets}
     return JsonResponse(response_data)

@@ -1,5 +1,5 @@
 from django.urls import path
-from analyses.views import AnalysisTableListView, AnalysisChartListView, ajx_employee_demographics_age, ajx_top_products, ajx_sales_breakdown_category, ajx_chart_employee_demographics_age
+from analyses.views import AnalysisTableListView, AnalysisChartListView, ajx_employee_demographics_age, ajx_top_products, ajx_sales_breakdown_category, ajx_chart_employee_demographics_age, ajx_chart_top_products
 
 app_name = 'analyses'
 
@@ -27,6 +27,9 @@ urlpatterns = [
 
     path('ajx_chart_employee_demographics_age/', ajx_chart_employee_demographics_age,
          name='ajx_chart_employee_demographics_age'),
+    path('ajx_chart_top_products/', ajx_chart_top_products,
+         name='ajx_chart_top_products'),
+
 
     # path('', EmployeeListView.as_view(), name='employee-list'),
 ]
