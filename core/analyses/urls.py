@@ -1,10 +1,19 @@
 from django.urls import path
-from analyses.views import AnalysisTableListView, AnalysisChartListView, ajx_employee_demographics_age, ajx_top_products, ajx_sales_breakdown_category, ajx_chart_employee_demographics_age, ajx_chart_top_products, ajx_chart_sales_breakdown_category
+from analyses.views import AnalysisTableListView, AnalysisChartListView, ajx_employee_demographics_age, ajx_top_products, ajx_sales_breakdown_category, ajx_chart_employee_demographics_age, ajx_chart_top_products, ajx_chart_sales_breakdown_category, EmployeeDemographicsAgePdfView, TopProductsPdfView, SalesBreakdownCategoryPdfView
 
 app_name = 'analyses'
 
 urlpatterns = [
     path('tables/', AnalysisTableListView.as_view(), name='analysis-table-list'),
+
+    path('tables/employee-demographics-age-pdf', EmployeeDemographicsAgePdfView,
+         name='analysis-table-employee-demographics-age-pdf'),
+
+    path('tables/top-products-pdf', TopProductsPdfView,
+         name='analysis-table-top-products-pdf'),
+
+    path('tables/sales-breakdown-category-pdf', SalesBreakdownCategoryPdfView,
+         name='analysis-table-sales-breakdown-category-pdf'),
 
     path('charts/', AnalysisChartListView.as_view(), name='analysis-chart-list'),
 

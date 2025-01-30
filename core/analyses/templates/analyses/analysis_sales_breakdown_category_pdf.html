@@ -1,0 +1,75 @@
+{% extends "base_pdf.html" %}
+{% block title %}Sales Breakdown by Category{% endblock %}
+
+
+{% block content %}
+
+
+  <div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+     <h1 class="h3 mb-0 text-gray-800">Sales Breakdown by Category</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+      <div class="col">
+        <div class="card shadow mb-4">
+          
+          <table border="1">
+          <thead>
+          <tr>
+          <th>Product Variation</th>
+          <th>Retail</th>
+          <th>Patient</th>
+          <th>Wholesale</th>
+          <th>Government</th>
+          <th>Corporate</th>
+          <th>Grand Total</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for row in data %}
+          <tr>
+          <td>{{ row.product_variation__name }}</td>
+          <td>{{ row.retail }}</td>
+          <td>{{ row.patient }}</td>
+          <td>{{ row.wholesale }}</td>
+          <td>{{ row.government }}</td>
+          <td>{{ row.corporate }}</td>
+          <td>{{ row.grand_total }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+          </table>       
+          
+        </div>
+      </div>
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+
+
+{% endblock %}
+

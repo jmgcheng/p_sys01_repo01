@@ -1,0 +1,73 @@
+{% extends "base_pdf.html" %}
+{% block title %}Top Products{% endblock %}
+
+
+{% block content %}
+
+
+  <div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+     <h1 class="h3 mb-0 text-gray-800">Top Products</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+      <div class="col">
+        <div class="card shadow mb-4">
+          
+          <table border="1">
+          <thead>
+          <tr>
+          <th>Product Variation</th>
+          <th>Product</th>
+          <th>Purchase Requested</th>
+          <th>Purchase Received</th>
+          <th>Sale Invoice</th>
+          <th>Official Receipt</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for row in data %}
+          <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.product_name }}</td>
+          <td>{{ row.purchase_requested }}</td>
+          <td>{{ row.purchase_received }}</td>
+          <td>{{ row.sale_invoice }}</td>
+          <td>{{ row.official_receipt }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+          </table>        
+          
+        </div>
+      </div>
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+
+
+{% endblock %}
+

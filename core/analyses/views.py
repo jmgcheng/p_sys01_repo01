@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Prefetch, Count, Case, When, Value, IntegerField, Sum
 from django.db.models.functions import Coalesce
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 # from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
 from employees.models import Employee
@@ -22,6 +23,7 @@ from sales.models import SaleInvoiceHeader, SaleInvoiceDetail, SaleInvoiceCatego
 from inventories.utils import get_quantity_purchase_request_subquery, get_quantity_purchase_receive_subquery, get_quantity_sale_invoice_subquery, get_quantity_official_receipt_subquery
 # from .mixins import AdminRequiredMixin
 from django.views import View
+from xhtml2pdf import pisa
 
 
 class AnalysisTableListView(LoginRequiredMixin, TemplateView):
@@ -35,6 +37,11 @@ class AnalysisChartListView(LoginRequiredMixin, TemplateView):
 def get_age(birth_date):
     today = date.today()
     return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+
+# --- AJXs ----------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
 def ajx_employee_demographics_age(request):
@@ -396,3 +403,138 @@ def ajx_chart_sales_breakdown_category(request):
     }
 
     return JsonResponse(response_data)
+
+
+# --- PDFs ----------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+def EmployeeDemographicsAgePdfView(request):
+    template_path = "analyses/analysis_employee_demographics_age_pdf.html"
+
+    age_groups = [
+        (18, 23),
+        (24, 29),
+        (30, 39),
+        (40, 49),
+        (50, 57),
+        (58, 64),
+        (65, 100),
+    ]
+    results = []
+    employees = Employee.objects.filter(
+        status__name__in=['PROBATION', 'REGULAR'],
+        birth_date__isnull=False
+    ).exclude(user__is_superuser=True)
+
+    for age_min, age_max in age_groups:
+        group_employees = [emp for emp in employees if age_min <= get_age(
+            emp.birth_date) <= age_max]
+        male_count = sum(1 for emp in group_employees if emp.gender == 'MALE')
+        female_count = sum(
+            1 for emp in group_employees if emp.gender == 'FEMALE')
+        total_count = male_count + female_count
+
+        results.append({
+            'age': f"{age_min}~{age_max}",
+            'male': f"{male_count} ({(male_count / total_count * 100) if total_count else 0:.0f}%)",
+            'female': f"{female_count} ({(female_count / total_count * 100) if total_count else 0:.0f}%)",
+            'total': f"{total_count} (100%)" if total_count else "0 (0%)",
+        })
+
+    context = {'data': results}
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'filename="employee_demographic_age.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse(f"Error generating PDF: <pre>{html}</pre>")
+
+    return response
+
+
+def TopProductsPdfView(request):
+    template_path = "analyses/analysis_top_products_pdf.html"
+
+    product_variations = ProductVariation.objects.annotate(
+        purchase_requested=Coalesce(
+            get_quantity_purchase_request_subquery(), 0),
+        purchase_received=Coalesce(
+            get_quantity_purchase_receive_subquery(), 0),
+        sale_invoice=Coalesce(get_quantity_sale_invoice_subquery(), 0),
+        official_receipt=Coalesce(get_quantity_official_receipt_subquery(), 0),
+        product_name=F('product__name'),
+    ).values(
+        'name',
+        'product_name',
+        'purchase_requested',
+        'purchase_received',
+        'sale_invoice',
+        'official_receipt',
+    )
+
+    context = {'data': product_variations}
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'filename="top_products.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse(f"Error generating PDF: <pre>{html}</pre>")
+
+    return response
+
+
+def SalesBreakdownCategoryPdfView(request):
+    template_path = "analyses/analysis_sales_breakdown_category_pdf.html"
+
+    product_variations = SaleInvoiceDetail.objects.values(
+        'product_variation__name'
+    ).annotate(
+        retail=Coalesce(Sum(Case(When(sale_invoice_header__category__name='RETAIL',
+                        then='quantity_request'), default=Value(0), output_field=IntegerField())), Value(0)),
+        patient=Coalesce(Sum(Case(When(sale_invoice_header__category__name='PATIENT',
+                         then='quantity_request'), default=Value(0), output_field=IntegerField())), Value(0)),
+        wholesale=Coalesce(Sum(Case(When(sale_invoice_header__category__name='WHOLESALE',
+                           then='quantity_request'), default=Value(0), output_field=IntegerField())), Value(0)),
+        government=Coalesce(Sum(Case(When(sale_invoice_header__category__name='GOVERNMENT',
+                            then='quantity_request'), default=Value(0), output_field=IntegerField())), Value(0)),
+        corporate=Coalesce(Sum(Case(When(sale_invoice_header__category__name='CORPORATE',
+                           then='quantity_request'), default=Value(0), output_field=IntegerField())), Value(0)),
+        grand_total=Coalesce(Sum('quantity_request'), Value(0)),
+    )
+
+    for pv in product_variations:
+        grand_total = pv['grand_total']
+        pv.update({
+            'retail': f"{pv['retail']} ({(pv['retail'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'patient': f"{pv['patient']} ({(pv['patient'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'wholesale': f"{pv['wholesale']} ({(pv['wholesale'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'government': f"{pv['government']} ({(pv['government'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'corporate': f"{pv['corporate']} ({(pv['corporate'] / grand_total * 100) if grand_total else 0:.0f}%)",
+            'grand_total': f"{grand_total} (100%)" if grand_total else "0 (0%)",
+        })
+
+    context = {'data': product_variations}
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'filename="sales_breakdown_category.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse(f"Error generating PDF: <pre>{html}</pre>")
+
+    return response

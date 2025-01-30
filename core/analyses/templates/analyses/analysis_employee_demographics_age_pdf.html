@@ -1,0 +1,69 @@
+{% extends "base_pdf.html" %}
+{% block title %}Employee Demographics - Age{% endblock %}
+
+
+{% block content %}
+
+
+  <div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+     <h1 class="h3 mb-0 text-gray-800">Employee Demographics - Age</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+      <div class="col">
+        <div class="card shadow mb-4">
+          
+          <table border="1">
+          <thead>
+          <tr>
+          <th>Age</th>
+          <th>Male</th>
+          <th>Female</th>
+          <th>Grand Total</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for row in data %}
+          <tr>
+          <td>{{ row.age }}</td>
+          <td>{{ row.male }}</td>
+          <td>{{ row.female }}</td>
+          <td>{{ row.total }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+          </table>          
+          
+        </div>
+      </div>
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+
+
+{% endblock %}
+
