@@ -24,6 +24,7 @@
             </div>
             <div class="card-body">
                 <canvas id="employeeDemographicsAge" width="400" height="400"></canvas>
+                <a class="btn btn-secondary pdf-chart" chart="employeeDemographicsAge" title="Employee Demographics by Age" blurb="This chart represents the age distribution of employees categorized by gender.">PDF</a>
             </div>
         </div>
     </div>
@@ -34,6 +35,7 @@
             </div>
             <div class="card-body">
                 <canvas id="topProductVariation" width="400" height="400"></canvas>
+                <a class="btn btn-secondary pdf-chart" chart="topProductVariation" title="Top Product Variation" blurb="This chart represents the most sold product variation.">PDF</a>
             </div>
         </div>            
     </div>
@@ -49,6 +51,7 @@
             </div>
             <div class="card-body">
                 <canvas id="salesBreakdownCategory" width="400" height="400"></canvas>
+                <a class="btn btn-secondary pdf-chart" chart="salesBreakdownCategory" title="Sales Breakdown Category" blurb="This chart represents most Sale Invoice category filed">PDF</a>
             </div>
         </div>
     </div>
@@ -75,6 +78,8 @@
 {% endblock %} 
 {% block scripts_bmain %}
 <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
 {% endblock %} 
 {% block scripts %}
 <script src="{% static 'js/analysis_chart_list.js' %}"></script>
