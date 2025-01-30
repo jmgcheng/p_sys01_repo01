@@ -1,5 +1,5 @@
 from django.urls import path
-from sales.views import SaleInvoiceCreateView, SaleInvoiceUpdateView, SaleInvoiceListView, SaleInvoiceDetailView, OfficialReceiptCreateView, OfficialReceiptUpdateView, OfficialReceiptListView, OfficialReceiptDetailView, ajx_sale_invoice_list, ajx_official_receipt_list
+from sales.views import SaleInvoiceCreateView, SaleInvoiceUpdateView, SaleInvoiceListView, SaleInvoiceDetailView, SaleInvoiceDetailPdfView, OfficialReceiptCreateView, OfficialReceiptUpdateView, OfficialReceiptListView, OfficialReceiptDetailView, ajx_sale_invoice_list, ajx_official_receipt_list
 
 app_name = 'sales'
 
@@ -19,6 +19,10 @@ urlpatterns = [
 
     path('invoices/<int:pk>/', SaleInvoiceDetailView.as_view(),
          name='sale-invoice-detail'),
+
+
+    path('invoices/<int:pk>/pdf', SaleInvoiceDetailPdfView,
+         name='sale-invoice-detail-pdf'),
 
     path('receipts/<int:pk>/', OfficialReceiptDetailView.as_view(),
          name='official-receipt-detail'),

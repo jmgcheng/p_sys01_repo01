@@ -8,11 +8,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Prefetch
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 # from .models import Purchase, PurchaseDetail
 from sales.models import SaleInvoiceCategory, SaleInvoiceStatus, SaleInvoiceHeader, SaleInvoiceDetail, OfficialReceiptStatus, OfficialReceiptHeader, OfficialReceiptDetail
 from sales.forms import SaleInvoiceHeaderForm, SaleInvoiceDetailForm, SaleInvoiceInlineFormSet, SaleInvoiceInlineFormSetNoExtra, OfficialReceiptHeaderForm, OfficialReceiptDetailForm, OfficialReceiptInlineFormSet, OfficialReceiptInlineFormSetNoExtra
 from django.views import View
+
+from xhtml2pdf import pisa
 
 
 class SaleInvoiceCreateView(LoginRequiredMixin, CreateView):
@@ -125,6 +128,46 @@ class SaleInvoiceDetailView(LoginRequiredMixin, DetailView):
         context['receipt_headers'] = receipt_headers_with_details
 
         return context
+
+
+def SaleInvoiceDetailPdfView(request, pk):
+    template_path = "sales/sale_invoice_detail_pdf.html"
+    sale_invoice = SaleInvoiceHeader.objects.get(pk=pk)
+    details = SaleInvoiceDetail.objects.filter(
+        sale_invoice_header=sale_invoice)
+    receipt_headers = OfficialReceiptHeader.objects.filter(
+        sale_invoice_header=sale_invoice).prefetch_related(
+            Prefetch(
+                'officialreceiptdetail_set',
+                queryset=OfficialReceiptDetail.objects.select_related(
+                    'product_variation'),
+                to_attr='receipt_details'
+            )
+    )
+
+    context = {
+        'object': sale_invoice,
+        'details': details,
+        'receipt_headers': receipt_headers
+    }
+
+    # Render HTML template
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # Create PDF response
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'filename="sale_invoice_{
+        pk}.pdf"'
+
+    # Convert HTML to PDF
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    # Return response if no errors
+    if pisa_status.err:
+        return HttpResponse("We had some errors <pre>" + html + "</pre>")
+
+    return response
 
 
 class SaleInvoiceListView(LoginRequiredMixin, ListView):

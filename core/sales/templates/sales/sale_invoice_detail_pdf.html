@@ -1,14 +1,6 @@
-{% extends "base.html" %}
-{% load static %}
-{% load crispy_forms_tags %}
-{% load group_tags %}
+{% extends "base_pdf.html" %}
 {% block title %}Sales Invoice Detail{% endblock %}
 
-{% block styles_bmain %}
-{% endblock %}
-
-{% block styles %}
-{% endblock %}
 
 {% block content %}
 
@@ -82,12 +74,11 @@
                 {% endfor %}
               </tbody>
             </table>
-            <div class="text-right">
+            <!-- <div class="text-right">
               <a class="btn btn-primary" href="{% url 'sales:sale-invoice-update' object.id %}">Edit</a>
               <a class="btn btn-secondary" href="{% url 'sales:sale-invoice-list' %}">Back to List</a>
-              <a class="btn btn-secondary" href="{% url 'sales:sale-invoice-detail-pdf' object.id %}" target="_blank">PDF</a>
 
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -209,8 +200,3 @@
 
 {% endblock %}
 
-{% block scripts_bmain %}
-{% endblock %}
-
-{% block scripts %}
-{% endblock %}
