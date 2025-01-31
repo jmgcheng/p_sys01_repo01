@@ -22,7 +22,8 @@ class Command(BaseCommand):
             raise CommandError(f"Error reading file: {e}")
 
         # Check required columns
-        required_columns = ['FIRST NAME', 'LAST NAME', 'CATEGORY']
+        required_columns = ['CUSTOMER ID',
+                            'FIRST NAME', 'LAST NAME', 'CATEGORY']
         if not all(col in df.columns for col in required_columns):
             missing_columns = [
                 col for col in required_columns if col not in df.columns]
@@ -30,10 +31,20 @@ class Command(BaseCommand):
                                ', '.join(missing_columns)}")
 
         # Clean up data
+        df['CUSTOMER ID'] = df['CUSTOMER ID'].fillna(
+            '').str.strip().str.upper().replace(" ", "-", regex=True)
         df['FIRST NAME'] = df['FIRST NAME'].fillna('').str.strip()
         df['LAST NAME'] = df['LAST NAME'].fillna('').str.strip()
         df['MIDDLE NAME'] = df['MIDDLE NAME'].fillna('').str.strip()
         df['CATEGORY'] = df['CATEGORY'].fillna('').str.strip().str.upper()
+
+        # Validate unique customer id
+        existing_customer_id = set(
+            Customer.objects.values_list('customer_id', flat=True))
+        duplicate_customer_id = set(df['CUSTOMER ID']) & existing_customer_id
+        if duplicate_customer_id:
+            raise CommandError(f"Duplicate CUSTOMER ID(s) already exist in database: {
+                               ', '.join(duplicate_customer_id)}")
 
         # Validate categories exist
         category_names = df['CATEGORY'].unique()
@@ -48,6 +59,7 @@ class Command(BaseCommand):
         # Insert customers
         with transaction.atomic():
             for _, row in df.iterrows():
+                customer_id = row['CUSTOMER ID']
                 first_name = row['FIRST NAME']
                 last_name = row['LAST NAME']
                 middle_name = row['MIDDLE NAME']
@@ -57,6 +69,7 @@ class Command(BaseCommand):
 
                 # Avoid duplicate entries
                 customer, created = Customer.objects.get_or_create(
+                    customer_id=customer_id,
                     first_name=first_name,
                     last_name=last_name,
                     category=category,

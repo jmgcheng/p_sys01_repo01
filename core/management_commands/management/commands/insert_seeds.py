@@ -74,6 +74,9 @@ class Command(BaseCommand):
                 ('seed_sales_saleinvoicestatus',
                  'seed_sales_saleinvoicestatus.xlsx'),
                 #
+                ('seed_sales_saleinvoicecategory',
+                 'seed_sales_saleinvoicecategory.xlsx'),
+                #
                 ('seed_sales_officialreceiptstatus',
                  'seed_sales_officialreceiptstatus.xlsx'),
 
@@ -88,6 +91,11 @@ class Command(BaseCommand):
                 #
                 ('seed_purchases_purchaserequestheader',
                  'seed_purchases_purchaserequestheader.xlsx'),
+
+
+                #
+                ('seed_sales_saleinvoiceheader',
+                 'seed_sales_saleinvoiceheader.xlsx'),
 
 
                 # Add more commands as needed

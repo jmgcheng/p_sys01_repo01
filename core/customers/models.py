@@ -9,6 +9,7 @@ class CustomerCategory(models.Model):
 
 
 class Customer(models.Model):
+    customer_id = models.CharField(max_length=50, unique=True, default='')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True)
