@@ -77,6 +77,13 @@ class Command(BaseCommand):
                 ('seed_sales_officialreceiptstatus',
                  'seed_sales_officialreceiptstatus.xlsx'),
 
+                #
+                ('seed_inventories_inventoryaddheader',
+                 'seed_inventories_inventoryaddheader.xlsx'),
+                #
+                ('seed_inventories_inventorydeductheader',
+                 'seed_inventories_inventorydeductheader.xlsx'),
+
                 # Add more commands as needed
             ]
 
