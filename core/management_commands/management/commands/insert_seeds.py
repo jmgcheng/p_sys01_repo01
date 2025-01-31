@@ -50,6 +50,12 @@ class Command(BaseCommand):
                 #
                 ('seed_auth_group_permissions',
                  'seed_auth_group_permissions.xlsx'),
+                #
+                ('seed_customers_customercategory',
+                 'seed_customers_customercategory.xlsx'),
+                #
+                ('seed_vendors_vendorcategory',
+                 'seed_vendors_vendorcategory.xlsx'),
 
 
                 # Add more commands as needed
