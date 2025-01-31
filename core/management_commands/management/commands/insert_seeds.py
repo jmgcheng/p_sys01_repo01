@@ -57,6 +57,13 @@ class Command(BaseCommand):
                 ('seed_vendors_vendorcategory',
                  'seed_vendors_vendorcategory.xlsx'),
 
+                #
+                ('seed_customers_customer',
+                 'seed_customers_customer.xlsx'),
+                #
+                ('seed_vendors_vendor',
+                 'seed_vendors_vendor.xlsx'),
+
 
                 # Add more commands as needed
             ]
