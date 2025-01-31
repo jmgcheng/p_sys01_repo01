@@ -44,7 +44,9 @@ class Command(BaseCommand):
                 #
                 ('seed_auth_group',
                  'seed_auth_group.xlsx'),
-
+                #
+                ('seed_auth_user_groups',
+                 'seed_auth_user_groups.xlsx'),
 
 
                 # Add more commands as needed
