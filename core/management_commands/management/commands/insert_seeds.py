@@ -64,6 +64,18 @@ class Command(BaseCommand):
                 ('seed_vendors_vendor',
                  'seed_vendors_vendor.xlsx'),
 
+                #
+                ('seed_purchases_purchaserequeststatus',
+                 'seed_purchases_purchaserequeststatus.xlsx'),
+                #
+                ('seed_purchases_purchasereceivestatus',
+                 'seed_purchases_purchasereceivestatus.xlsx'),
+                #
+                ('seed_sales_saleinvoicestatus',
+                 'seed_sales_saleinvoicestatus.xlsx'),
+                #
+                ('seed_sales_officialreceiptstatus',
+                 'seed_sales_officialreceiptstatus.xlsx'),
 
                 # Add more commands as needed
             ]
