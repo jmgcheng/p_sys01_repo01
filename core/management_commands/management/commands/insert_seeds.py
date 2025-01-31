@@ -41,6 +41,12 @@ class Command(BaseCommand):
                 ('seed_products_productvariation',
                  'seed_products_productvariation.xlsx'),
 
+                #
+                ('seed_auth_group',
+                 'seed_auth_group.xlsx'),
+
+
+
                 # Add more commands as needed
             ]
 
