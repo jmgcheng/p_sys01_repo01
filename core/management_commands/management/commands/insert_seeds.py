@@ -84,6 +84,12 @@ class Command(BaseCommand):
                 ('seed_inventories_inventorydeductheader',
                  'seed_inventories_inventorydeductheader.xlsx'),
 
+
+                #
+                ('seed_purchases_purchaserequestheader',
+                 'seed_purchases_purchaserequestheader.xlsx'),
+
+
                 # Add more commands as needed
             ]
 

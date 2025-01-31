@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         # Load Excel file
         try:
-            df = pd.read_excel(filename, dtype={'CODE': str, 'ADDER': str})
+            df = pd.read_excel(filename)
         except Exception as e:
             raise CommandError(f"Error reading file: {e}")
 
