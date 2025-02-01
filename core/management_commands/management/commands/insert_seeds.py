@@ -103,7 +103,9 @@ class Command(BaseCommand):
                 #
                 ('seed_purchases_purchasereceiveheader',
                  'seed_purchases_purchasereceiveheader.xlsx'),
-
+                #
+                ('seed_purchases_purchasereceivedetail',
+                 'seed_purchases_purchasereceivedetail.xlsx'),
                 #
                 ('seed_sales_saleinvoiceheader',
                  'seed_sales_saleinvoiceheader.xlsx'),
