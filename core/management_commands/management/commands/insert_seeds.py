@@ -84,6 +84,9 @@ class Command(BaseCommand):
                 ('seed_inventories_inventoryaddheader',
                  'seed_inventories_inventoryaddheader.xlsx'),
                 #
+                ('seed_inventories_inventoryadddetail',
+                 'seed_inventories_inventoryadddetail.xlsx'),
+                #
                 ('seed_inventories_inventorydeductheader',
                  'seed_inventories_inventorydeductheader.xlsx'),
 
