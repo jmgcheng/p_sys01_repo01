@@ -104,6 +104,9 @@ class Command(BaseCommand):
                 #
                 ('seed_sales_saleinvoiceheader',
                  'seed_sales_saleinvoiceheader.xlsx'),
+                #
+                ('seed_sales_saleinvoicedetail',
+                 'seed_sales_saleinvoicedetail.xlsx'),
 
 
                 # Add more commands as needed
