@@ -110,6 +110,9 @@ class Command(BaseCommand):
                 #
                 ('seed_sales_saleinvoicedetail',
                  'seed_sales_saleinvoicedetail.xlsx'),
+                #
+                ('seed_sales_officialreceiptheader',
+                 'seed_sales_officialreceiptheader.xlsx'),
 
 
                 # Add more commands as needed
