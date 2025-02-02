@@ -63,6 +63,7 @@ class ProductVariation(models.Model):
     color = models.ForeignKey(ProductColor, on_delete=models.SET_NULL,
                               blank=True, null=True, related_name="product_color")
     image_url = models.CharField(max_length=2083, blank=True, null=True)
+    quantity_alert = models.IntegerField(default=100)
 
     def __str__(self):
         return self.name

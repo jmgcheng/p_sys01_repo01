@@ -23,7 +23,7 @@ class ProductVariationForm(forms.ModelForm):
     class Meta:
         model = ProductVariation
         fields = ['code', 'product', 'name', 'excerpt',
-                  'description', 'unit', 'size', 'color', 'image_url']
+                  'description', 'unit', 'size', 'color', 'image_url', 'quantity_alert']
 
     def clean(self):
         cleaned_data = super().clean()

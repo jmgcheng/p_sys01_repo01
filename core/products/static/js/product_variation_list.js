@@ -22,6 +22,7 @@ $(document).ready(function() {
             { data: 'unit' },
             { data: 'color' },
             { data: 'product' },
+            { data: 'quantity_alert' },
         ],
         layout: {
             // topStart: 'pageLength',

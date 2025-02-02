@@ -199,6 +199,8 @@ def insert_excel_product_variations(df):
             color=None if pd.isna(foreign_keys['colors'].get(
                 row['PRODUCT COLOR'], None)) else foreign_keys['colors'].get(row['PRODUCT COLOR'].upper(), None),
             image_url='',
+            quantity_alert=100 if pd.isna(
+                row.get('QUANTITY ALERT', None)) else row.get('QUANTITY ALERT', None),
         )
         product_variations.append(product_variation)
 

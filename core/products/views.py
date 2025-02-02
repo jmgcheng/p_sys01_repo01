@@ -277,6 +277,7 @@ def ajx_product_variation_list(request):
             'unit': pv.unit.name if pv.unit else '',
             'color': pv.color.name if pv.color else '',
             'product': pv.product.name if pv.product.name else '',
+            'quantity_alert': pv.quantity_alert if pv.quantity_alert else '',
         })
 
     response = {
