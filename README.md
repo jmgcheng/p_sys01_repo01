@@ -57,3 +57,27 @@
 - implement - inventory quantity
 - finalize - ui improvements
 - create - management commands for all apps - if all flow are final and stable
+
+## milestone - nn - milestone check - 02032025
+
+- [ / ] - finalize - eye candies for 1st apps of portfolio
+- [ / ] - fix - filtering/sorting - datatables all needed columns - on different apps
+- [ / ] - add/attach - apps details to parent transaction
+- [ / ] - do - simple transaction flows - Note/Save 'hc system\notes.txt'
+- [ / ] - implement - inventory quantity
+- [ / ] - create - management commands for all apps
+- [ / ] - create - management commands - generate dummy transactions
+- [ / ] - add - product variation - quantity alert
+- [ / ] - add - pdf button - generate pdf
+- [ / ] - add - charts
+- [ / ] - add - business table data
+
+## Upcoming Todos - 01 - 02032025
+
+- find/test/apply - appropriate fonts
+- find/test/apply - different ui improvements
+- update/finalize - generated pdf templates
+- apply - permissions for main menu and class
+- retest/fix - docker compose setup
+- cleanup - code
+- resetup/clean - migration folders
