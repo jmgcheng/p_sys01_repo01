@@ -402,7 +402,7 @@ class Command(BaseCommand):
             detail_dict = {
                 'sale_invoice_header': sale_invoice_header['code'],
                 'product_variation': product_variation['code'],
-                'quantity_request': randint(1, 20)
+                'quantity_request': randint(5, 20)
             }
 
             detail_list.append(detail_dict)
@@ -441,7 +441,7 @@ class Command(BaseCommand):
                 if issue_is <= 1:  # 10% chance of issue
                     print('created issue in official receipt detail')
                     quantity_paid = randint(
-                        sale_invoice_detail['quantity_request'] - 10, sale_invoice_detail['quantity_request'] + 20)
+                        sale_invoice_detail['quantity_request'] - 3, sale_invoice_detail['quantity_request'] + 20)
                 else:
                     quantity_paid = sale_invoice_detail['quantity_request']
 
