@@ -81,3 +81,26 @@
 - retest/fix - docker compose setup
 - cleanup - code
 - resetup/clean - migration folders
+
+## milestone - nn - milestone check - 02112025
+
+- [ / ] - update - theme
+- [ / ] - update - chart list - add more card
+- [ / ] - update - pdf templates
+- [ / ] - update - datatables - default sort column
+- [ / ] - add - management command - generate dummy employees
+- [ / ] - code cleanup
+- [ / ] - test run - docker compose
+- [ / ] - update - requirements.txt
+- [ / ] - update - collectstatic
+
+## Upcoming Todos - 01 - 02112025
+
+- finalize - video flow - portfolio
+- record - video - portfolio
+- edit - video - portfolio
+- upload/check - video - portfolio
+- update - issue notes
+- update - 'hc system/notes.txt'
+- apply - permissions for main menu and class
+- resetup/clean - migration folders
