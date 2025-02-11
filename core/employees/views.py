@@ -5,7 +5,6 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-# from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
@@ -17,7 +16,6 @@ from django.contrib.postgres.aggregates import StringAgg
 from employees.models import Employee, EmployeeJobSpecialty, EmployeeJobLevel, EmployeeJob, EmployeeStatus
 from employees.forms import EmployeeCreationForm, EmployeeUpdateForm, EmployeeExcelUploadForm
 from employees.utils import insert_excel_employees, update_excel_employees, handle_uploaded_file
-# GroupForm, UserGroupForm, PermissionForm
 from employees.tasks import import_employees_task
 from celery.result import AsyncResult
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView

@@ -10,7 +10,6 @@ from django.db.models import Q, F, Prefetch
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.template.loader import get_template
 from django.urls import reverse_lazy
-# from .models import Purchase, PurchaseDetail
 from sales.models import SaleInvoiceCategory, SaleInvoiceStatus, SaleInvoiceHeader, SaleInvoiceDetail, OfficialReceiptStatus, OfficialReceiptHeader, OfficialReceiptDetail
 from sales.forms import SaleInvoiceHeaderForm, SaleInvoiceDetailForm, SaleInvoiceInlineFormSet, SaleInvoiceInlineFormSetNoExtra, OfficialReceiptHeaderForm, OfficialReceiptDetailForm, OfficialReceiptInlineFormSet, OfficialReceiptInlineFormSetNoExtra
 from django.views import View

@@ -14,6 +14,7 @@ def validate_age(value):
 
 class EmployeeStatus(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    # PROBATION, REGULAR, RESIGNED, TERMINATED, SEPARATED
 
     def __str__(self):
         return self.name

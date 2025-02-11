@@ -1,4 +1,3 @@
-# from audioop import reverse
 from django.shortcuts import redirect, render
 # from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -10,9 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Prefetch
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-# from .models import Purchase, PurchaseDetail
 from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
-# from .forms import PurchaseForm, PurchaseDetailFormSet, PurchaseFormSet
 from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 # from .mixins import AdminRequiredMixin
 from django.views import View
@@ -453,62 +450,3 @@ def ajx_purchase_receive_list(request):
     }
 
     return JsonResponse(response)
-
-
-# to be deleted
-# class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
-#     model = PurchaseRequestHeader
-#     template_name = 'purchases/purchase_request_form.html'
-#     form_class = PurchaseRequestHeaderForm
-#     success_url = reverse_lazy('purchases:purchase-request-create')
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-
-#         # prefix
-#         #   - the prefix name of input type hidden fields auto created in your template {{ formset.management_form }}
-#         #   - also used for every input element for the detail
-#         if self.request.POST:
-#             context['formset'] = PurchaseRequestModelFormSet(self.request.POST, prefix='purchase_request_detail')
-
-#             print('-----------------hermit1-------------------')
-#             print(self.request.POST)
-#             print('-----------------hermit1-------------------')
-
-#         else:
-#             # Pass an empty formset when not POST
-#             context['formset'] = PurchaseRequestModelFormSet(prefix='purchase_request_detail', queryset=PurchaseRequestDetail.objects.none())
-#         return context
-
-#     def form_valid(self, form):
-#         context = self.get_context_data()
-#         formset = context['formset']
-
-#         print(f'-----------hermit2---------------')
-#         print(formset)
-#         print(f'-----------hermit2---------------')
-
-#         # Process the PurchaseDetail formset
-#         if formset.is_valid():
-#             purchase_header = form.save()
-
-#             for purchase_detail_form in formset:
-#                 if purchase_detail_form.cleaned_data.get('product_variation'):
-#                     purchase_detail = purchase_detail_form.save(commit=False)
-
-#                     purchase_detail.purchase_request_header = purchase_header
-
-#                     purchase_detail.save()
-
-#         else:
-#             # If formset is not valid, you can access formset.errors
-#             print(f'-----------hermit3---------------')
-#             print(formset.errors)
-#             print(f'-----------hermit3---------------')
-#             return render(
-#                 self.request,
-#                 self.template_name,
-#                 context={'form': form, 'formset': formset},
-#             )
-
-#         return super().form_valid(form)

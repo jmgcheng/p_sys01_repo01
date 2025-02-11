@@ -3,6 +3,7 @@ from django.db import models
 
 class CustomerCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    # RETAIL, PATIENT, WHOLESALE, GOVERNMENT, CORPORATE
 
     def __str__(self):
         return self.name

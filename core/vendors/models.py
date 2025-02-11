@@ -3,6 +3,7 @@ from django.db import models
 
 class VendorCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    # RETAIL, DISTRIBUTOR, WHOLESALER
 
     def __str__(self):
         return self.name

@@ -8,6 +8,7 @@ from html_sanitizer.django import get_sanitizer
 
 class ProductUnit(models.Model):
     name = models.CharField(max_length=20, unique=True)
+    # PIECES, KILOS, GRAMS, METERS, CENTIMETERS, BUNDLES, PACKS, MILLILITERS, LITERS, GALLONS, MILLIGRAMS
 
     def __str__(self):
         return self.name
@@ -15,6 +16,7 @@ class ProductUnit(models.Model):
 
 class ProductSize(models.Model):
     name = models.CharField(max_length=20, unique=True)
+    # EXTRA SMALL, SMALL, MEDIUM, LARGE, EXTRA LARGE, 60, 100, 150, 500, 1, 2, 3, 5, 10, 350, 25, 250, 400, 50, 30, 70
 
     def __str__(self):
         return self.name

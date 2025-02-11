@@ -19,6 +19,7 @@ class SaleInvoiceCategory(models.Model):
 
 class SaleInvoiceStatus(models.Model):
     name = models.CharField(max_length=50, unique=True, null=False)
+    # OPEN (FOR PAYMENT), CANCELLED, CLOSED
 
     def save(self, *args, **kwargs):
         self.name = self.name.upper()

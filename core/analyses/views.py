@@ -14,12 +14,10 @@ from django.db.models.functions import Coalesce
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.template.loader import get_template
 from django.urls import reverse_lazy
-# from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseRequestStatus, PurchaseReceiveHeader, PurchaseReceiveDetail
 from employees.models import Employee
 from products.models import ProductVariation
 from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, PurchaseReceiveHeader, PurchaseReceiveDetail
 from sales.models import SaleInvoiceHeader, SaleInvoiceDetail, SaleInvoiceCategory, OfficialReceiptHeader, OfficialReceiptDetail
-# from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 from inventories.utils import get_quantity_purchase_request_subquery, get_quantity_purchase_receive_subquery, get_quantity_sale_invoice_subquery, get_quantity_official_receipt_subquery
 # from .mixins import AdminRequiredMixin
 from django.views import View
@@ -66,12 +64,6 @@ def ajx_employee_demographics_age(request):
     ).exclude(
         user__is_superuser=True
     )
-
-    # print(f'-------------hermit1------------------')
-    # for employee in employees:
-    #     print(
-    #         f'{employee.company_id} - {employee.gender} - {get_age(employee.birth_date)}')
-    # print(f'-------------hermit1------------------')
 
     #
     for age_min, age_max in age_groups:

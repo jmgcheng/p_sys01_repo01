@@ -1,17 +1,12 @@
-# import pandas as pd
-# import os
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
-# from django.utils import timezone
-# # from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required, login_required
 from django.db.models import Q, Count, F, Case, When, IntegerField, Value, Prefetch, TextField
 from django.db.models.functions import Coalesce
-# from django.contrib.postgres.aggregates import StringAgg
 from products.models import ProductColor, ProductSize, ProductUnit, Product, ProductVariation
 from products.forms import ProductForm, ProductVariationForm
 from inventories.utils import get_quantity_purchasing_subquery, get_quantity_purchasing_receive_subquery, get_quantity_sale_releasing_subquery, get_quantity_sold_subquery, get_quantity_inventory_add_subquery, get_quantity_inventory_deduct_subquery
@@ -150,9 +145,9 @@ def ajx_product_list(request):
     order_column = request.GET.get(
         f'columns[{order_column_index}][data]', 'id')
 
-    print(f'----------------hermit1------------------')
-    print(order_column)
-    print(f'----------------hermit1------------------')
+    # print(f'----------------hermit1------------------')
+    # print(order_column)
+    # print(f'----------------hermit1------------------')
 
     if order_direction == 'desc':
         order_column = f'-{order_column}'
