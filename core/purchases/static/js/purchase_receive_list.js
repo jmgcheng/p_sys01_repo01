@@ -33,7 +33,7 @@ $(document).ready(function() {
             // bottom2Start: 'info',
             // bottom2End: 'paging'
         },
-        order: [[0, 'desc']],
+        order: [[2, 'desc']],
         pageLength: 50,
     });
     

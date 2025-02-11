@@ -34,7 +34,7 @@ $(document).ready(function() {
             // bottom2Start: 'info',
             // bottom2End: 'paging'
         },
-        order: [[0, 'desc']],
+        order: [[1, 'desc']],
         pageLength: 50,
     });
     
