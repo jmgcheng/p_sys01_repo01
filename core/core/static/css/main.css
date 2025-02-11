@@ -1,3 +1,73 @@
+
+/* Apply font globally */
+body {
+    font-family: 'Inter', sans-serif;  /* Change to your preferred font */
+}
+
+/* Override Bootstrap elements */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+
+/* --------------------------------------------- */
+/*
+124a7e-165b9c
+bd1e0d-d62815
+*/
+
+
+/* .psys .bg-primary {
+    background-color: #124a7e !important;
+}
+
+.psys .text-primary {
+    color: #124a7e !important;
+}
+
+.psys .btn-primary {
+    background-color: #124a7e !important;
+}
+.psys .btn-primary:hover {
+    background-color: #165b9c !important;
+}
+
+.psys .pagination .dt-paging-button.active button {
+    background-color: #124a7e !important;
+} */
+
+.psys .navbar {
+    border-top: 7px solid #124a7e !important;
+}
+
+.psys .navbar-brand:hover {
+    color: #f7f019;
+}
+
+.psys .btn-primary:hover {
+    color: #f7f019;
+}
+.psys .btn-secondary:hover {
+    background-image: linear-gradient(white,#fff 6%,#dddddd);
+}
+
+.psys .dt-container a {
+    color: #124a7e;
+}
+
+/* --------------------------------------------- */
+
+
+.navbar-brand {
+    font-size: 30px;
+}
+
+
 .dropdown-toggle-no-arrow::after {
     display: none;
 }
