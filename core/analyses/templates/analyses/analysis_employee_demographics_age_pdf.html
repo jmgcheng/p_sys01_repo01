@@ -16,25 +16,25 @@
       <div class="col">
         <div class="card shadow mb-4">
           
-          <table border="1">
-          <thead>
-          <tr>
-          <th>Age</th>
-          <th>Male</th>
-          <th>Female</th>
-          <th>Grand Total</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for row in data %}
-          <tr>
-          <td>{{ row.age }}</td>
-          <td>{{ row.male }}</td>
-          <td>{{ row.female }}</td>
-          <td>{{ row.total }}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
+          <table border="1" style="border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Age</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Male</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Female</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Grand Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.age }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.male }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.female }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.total }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>          
           
         </div>
