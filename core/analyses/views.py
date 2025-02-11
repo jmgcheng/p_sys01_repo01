@@ -478,6 +478,9 @@ def TopProductsPdfView(request):
         'official_receipt',
     )
 
+    product_variations = product_variations.order_by(
+        F('official_receipt').desc(nulls_last=True))
+
     context = {'data': product_variations}
 
     template = get_template(template_path)
