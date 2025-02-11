@@ -17,30 +17,30 @@
         <div class="card shadow mb-4">
           
           <table border="1">
-          <thead>
-          <tr>
-          <th>Product Variation</th>
-          <th>Retail</th>
-          <th>Patient</th>
-          <th>Wholesale</th>
-          <th>Government</th>
-          <th>Corporate</th>
-          <th>Grand Total</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for row in data %}
-          <tr>
-          <td>{{ row.product_variation__name }}</td>
-          <td>{{ row.retail }}</td>
-          <td>{{ row.patient }}</td>
-          <td>{{ row.wholesale }}</td>
-          <td>{{ row.government }}</td>
-          <td>{{ row.corporate }}</td>
-          <td>{{ row.grand_total }}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
+            <thead>
+              <tr>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Product Variation</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Retail</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Patient</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Wholesale</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Government</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Corporate</th>
+                <th style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">Grand Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.product_variation__name }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.retail }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.patient }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.wholesale }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.government }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.corporate }}</td>
+                <td style="text-align: center; vertical-align: middle; line-height: 15px; padding-top: 5px;">{{ row.grand_total }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>       
           
         </div>
