@@ -38,6 +38,7 @@ $(document).ready(function() {
         bFilter: false,
         responsive: true,
         autoWidth: false,
+        order: [[5, 'desc']],
     });
 
 
