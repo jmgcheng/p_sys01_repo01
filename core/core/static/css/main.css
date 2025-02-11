@@ -102,3 +102,13 @@ table.dataTable th.dt-type-date, table.dataTable td.dt-type-date {
 #accordionDatatableFilter .card-body {
     padding: 7px;
 }
+
+
+.center-p p {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);    
+}
