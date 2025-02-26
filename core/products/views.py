@@ -11,6 +11,10 @@ from products.models import ProductColor, ProductSize, ProductUnit, Product, Pro
 from products.forms import ProductForm, ProductVariationForm
 from inventories.utils import get_quantity_purchasing_subquery, get_quantity_purchasing_receive_subquery, get_quantity_sale_releasing_subquery, get_quantity_sold_subquery, get_quantity_inventory_add_subquery, get_quantity_inventory_deduct_subquery
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from products.serializers import ProductSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status as drf_status
 
 
 class ProductListView(LoginRequiredMixin, ListView):
@@ -120,6 +124,28 @@ class ProductVariationUpdateView(LoginRequiredMixin, UpdateView):
         #
         messages.warning(self.request, 'Please check errors below')
         return super().form_invalid(form)
+
+
+# --- api ----------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+
+class ProductListCreateViewApi(APIView):
+    def get(self, request):
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+# --- ajax ---------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 
 
 @login_required

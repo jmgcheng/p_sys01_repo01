@@ -38,6 +38,8 @@ urlpatterns = [
 
     path('analyses/', include('analyses.urls')),
 
+    path('api/', include('apis.urls')),
+
     path('profile/', user_views.profile, name='profile'),
     path('profile/password/', user_views.change_password, name='change_password'),
 

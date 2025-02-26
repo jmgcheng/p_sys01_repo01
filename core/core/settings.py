@@ -77,6 +77,8 @@ INSTALLED_APPS = [
 
     'django_celery_results',
     'dbbackup',
+
+    'rest_framework',
 ]
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
