@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.core.paginator import Paginator
-from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -131,17 +131,48 @@ class ProductVariationUpdateView(LoginRequiredMixin, UpdateView):
 # ------------------------------------------------------------------------------------------------------------------------
 
 class ProductListCreateViewApi(APIView):
+    # takes care of listing products. Eg. GET domain.com/api/products/
     def get(self, request):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
+    # takes care of creating a single new product. Eg. POST domain.com/api/products/
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+
+class ProductRetrieveUpdateDestroyViewApi(APIView):
+    def get_object(self, pk):
+        # try:
+        #     return Product.objects.get(pk=self.kwargs['pk'])
+        # except Product.DoesNotExist:
+        #     raise Http404
+        return get_object_or_404(Product, pk=pk)
+
+    # takes care of getting single product detail. Eg. GET domain.com/api/products/1
+    def get(self, request, pk):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+
+    # takes care of updating single product detail. Eg. PUT domain.com/api/products/1
+    def put(self, request, pk):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request):
+    #     product = self.get_object()
+    #     product.delete()
+    #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
 
 # --- ajax ---------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
