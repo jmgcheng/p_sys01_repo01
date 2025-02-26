@@ -11,7 +11,7 @@ from products.models import ProductColor, ProductSize, ProductUnit, Product, Pro
 from products.forms import ProductForm, ProductVariationForm
 from inventories.utils import get_quantity_purchasing_subquery, get_quantity_purchasing_receive_subquery, get_quantity_sale_releasing_subquery, get_quantity_sold_subquery, get_quantity_inventory_add_subquery, get_quantity_inventory_deduct_subquery
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from products.serializers import ProductSerializer
+from products.serializers import ProductSerializer, ProductVariationSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status as drf_status
@@ -173,6 +173,48 @@ class ProductRetrieveUpdateDestroyViewApi(APIView):
     #     product = self.get_object()
     #     product.delete()
     #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
+
+
+class ProductVariationListCreateViewApi(APIView):
+    def get(self, request):
+        product_variations = ProductVariation.objects.all()
+        serializer = ProductVariationSerializer(product_variations, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        # sample postman payload
+        # {
+        #     "code": "PV-API-002",
+        #     "product": 1,
+        #     "name": "API PRODUCT VARIATION 02",
+        #     "unit": 11,
+        #     "size": null
+        # }
+        serializer = ProductVariationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+
+class ProductVariationRetrieveUpdateDestroyViewApi(APIView):
+    def get_object(self, pk):
+        return get_object_or_404(ProductVariation, pk=pk)
+
+    def get(self, request, pk):
+        product_variation = self.get_object(pk)
+        serializer = ProductVariationSerializer(product_variation)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        product_variation = self.get_object(pk)
+        serializer = ProductVariationSerializer(
+            product_variation, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
 
 # --- ajax ---------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
