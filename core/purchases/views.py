@@ -13,7 +13,7 @@ from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, Purch
 from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 # from .mixins import AdminRequiredMixin
 from django.views import View
-from purchases.serializers import PurchaseRequestStatusSerializer, PurchaseRequestDetailSerializer, PurchaseRequestSerializer
+from purchases.serializers import PurchaseRequestStatusSerializer, PurchaseRequestDetailSerializer, PurchaseRequestSerializer, PurchaseReceiveStatusSerializer, PurchaseReceiveDetailSerializer, PurchaseReceiveSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
@@ -314,6 +314,62 @@ class PurchaseRequestRetrieveUpdateDestroyViewApi(APIView):
     #     if not purchase_request:
     #         return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
     #     purchase_request.delete()
+    #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
+
+
+class PurchaseReceiveListCreateViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        purchase_receives = PurchaseReceiveHeader.objects.all()
+        serializer = PurchaseReceiveSerializer(purchase_receives, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = PurchaseReceiveSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+
+class PurchaseReceiveRetrieveUpdateDestroyViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return PurchaseReceiveHeader.objects.get(pk=pk)
+        except PurchaseReceiveHeader.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        purchase_receive = self.get_object(pk)
+        if not purchase_receive:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = PurchaseReceiveSerializer(purchase_receive)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        purchase_receive = self.get_object(pk)
+        if not purchase_receive:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = PurchaseReceiveSerializer(
+            purchase_receive, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk):
+    #     purchase_receive = self.get_object(pk)
+    #     if not purchase_receive:
+    #         return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+    #     purchase_receive.delete()
     #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
 
 

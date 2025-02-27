@@ -66,3 +66,64 @@ class PurchaseRequestSerializer(serializers.ModelSerializer):
                     purchase_request_header=instance, **detail_data)
 
         return instance
+
+
+class PurchaseReceiveStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseReceiveStatus
+        fields = '__all__'
+
+
+class PurchaseReceiveDetailSerializer(serializers.ModelSerializer):
+    product_variation = serializers.PrimaryKeyRelatedField(
+        queryset=ProductVariation.objects.all())
+
+    class Meta:
+        model = PurchaseReceiveDetail
+        fields = ('product_variation', 'quantity_received')
+
+
+class PurchaseReceiveSerializer(serializers.ModelSerializer):
+    status = serializers.PrimaryKeyRelatedField(
+        queryset=PurchaseReceiveStatus.objects.all(), write_only=True)
+    purchase_request_header = serializers.PrimaryKeyRelatedField(
+        queryset=PurchaseRequestHeader.objects.all(), write_only=True)
+    receiver = serializers.PrimaryKeyRelatedField(
+        queryset=Employee.objects.all(), write_only=True)
+
+    # we don't need to use 'source' below if only we use 'related_name' for purchase_request_header in PurchaseReceiveDetail model
+    detail = PurchaseReceiveDetailSerializer(
+        many=True, source='purchasereceivedetail_set')
+
+    class Meta:
+        model = PurchaseReceiveHeader
+        fields = ('id', 'code', 'date', 'receiver',
+                  'purchase_request_header', 'status', 'detail')
+
+    def create(self, validated_data):
+        details_data = validated_data.pop('purchasereceivedetail_set')
+        purchase_receive = PurchaseReceiveHeader.objects.create(
+            **validated_data)
+
+        for detail_data in details_data:
+            PurchaseReceiveDetail.objects.create(
+                purchase_receive_header=purchase_receive, **detail_data)
+
+        return purchase_receive
+
+    def update(self, instance, validated_data):
+        details_data = validated_data.pop('purchasereceivedetail_set')
+
+        # Update main PurchaseReceiveHeader fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Handle details update
+        if details_data is not None:
+            instance.purchasereceivedetail_set.all().delete()  # Clear old details
+            for detail_data in details_data:
+                PurchaseReceiveDetail.objects.create(
+                    purchase_receive_header=instance, **detail_data)
+
+        return instance
