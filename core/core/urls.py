@@ -40,6 +40,8 @@ urlpatterns = [
 
     path('api/', include('apis.urls')),
 
+    path('api-auth/', include('rest_framework.urls')),
+
     path('profile/', user_views.profile, name='profile'),
     path('profile/password/', user_views.change_password, name='change_password'),
 

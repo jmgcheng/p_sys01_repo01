@@ -77,7 +77,7 @@ class EmployeeUpdateView(LoginRequiredMixin, UpdateView):
 # ------------------------------------------------------------------------------------------------------------------------
 
 class EmployeeListCreateViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -94,7 +94,7 @@ class EmployeeListCreateViewApi(APIView):
 
 
 class EmployeeRetrieveUpdateDestroyViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):

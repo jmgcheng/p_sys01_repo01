@@ -284,7 +284,7 @@ class OfficialReceiptListView(LoginRequiredMixin, ListView):
 
 
 class SaleInvoiceListCreateViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -301,7 +301,7 @@ class SaleInvoiceListCreateViewApi(APIView):
 
 
 class SaleInvoiceRetrieveUpdateDestroyViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
@@ -340,7 +340,7 @@ class SaleInvoiceRetrieveUpdateDestroyViewApi(APIView):
 
 
 class OfficialReceiptListCreateViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -357,7 +357,7 @@ class OfficialReceiptListCreateViewApi(APIView):
 
 
 class OfficialReceiptRetrieveUpdateDestroyViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):

@@ -15,6 +15,7 @@ from products.serializers import ProductSerializer, ProductVariationSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status as drf_status
+from rest_framework.permissions import IsAuthenticated
 
 
 class ProductListView(LoginRequiredMixin, ListView):
@@ -131,6 +132,8 @@ class ProductVariationUpdateView(LoginRequiredMixin, UpdateView):
 # ------------------------------------------------------------------------------------------------------------------------
 
 class ProductListCreateViewApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     # takes care of listing products. Eg. GET domain.com/api/products/
     def get(self, request):
         products = Product.objects.all()
@@ -147,6 +150,8 @@ class ProductListCreateViewApi(APIView):
 
 
 class ProductRetrieveUpdateDestroyViewApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         # try:
         #     return Product.objects.get(pk=self.kwargs['pk'])
@@ -176,6 +181,8 @@ class ProductRetrieveUpdateDestroyViewApi(APIView):
 
 
 class ProductVariationListCreateViewApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         product_variations = ProductVariation.objects.all()
         serializer = ProductVariationSerializer(product_variations, many=True)
@@ -198,6 +205,8 @@ class ProductVariationListCreateViewApi(APIView):
 
 
 class ProductVariationRetrieveUpdateDestroyViewApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         return get_object_or_404(ProductVariation, pk=pk)
 

@@ -262,7 +262,7 @@ class PurchaseReceiveListView(LoginRequiredMixin, ListView):
 # ------------------------------------------------------------------------------------------------------------------------
 
 class PurchaseRequestListCreateViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -279,7 +279,7 @@ class PurchaseRequestListCreateViewApi(APIView):
 
 
 class PurchaseRequestRetrieveUpdateDestroyViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
@@ -318,7 +318,7 @@ class PurchaseRequestRetrieveUpdateDestroyViewApi(APIView):
 
 
 class PurchaseReceiveListCreateViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -335,7 +335,7 @@ class PurchaseReceiveListCreateViewApi(APIView):
 
 
 class PurchaseReceiveRetrieveUpdateDestroyViewApi(APIView):
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
