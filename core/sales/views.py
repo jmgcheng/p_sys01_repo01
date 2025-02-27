@@ -14,6 +14,12 @@ from sales.models import SaleInvoiceCategory, SaleInvoiceStatus, SaleInvoiceHead
 from sales.forms import SaleInvoiceHeaderForm, SaleInvoiceDetailForm, SaleInvoiceInlineFormSet, SaleInvoiceInlineFormSetNoExtra, OfficialReceiptHeaderForm, OfficialReceiptDetailForm, OfficialReceiptInlineFormSet, OfficialReceiptInlineFormSetNoExtra
 from django.views import View
 from xhtml2pdf import pisa
+from sales.serializers import SaleInvoiceStatusSerializer, SaleInvoiceDetailSerializer, SaleInvoiceSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status as drf_status
 
 
 class SaleInvoiceCreateView(LoginRequiredMixin, CreateView):
@@ -270,6 +276,72 @@ class OfficialReceiptDetailView(LoginRequiredMixin, DetailView):
 class OfficialReceiptListView(LoginRequiredMixin, ListView):
     model = OfficialReceiptHeader
     template_name = 'sales/official_receipt_list.html'
+
+
+# --- api ----------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+
+
+class SaleInvoiceListCreateViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        sale_invoices = SaleInvoiceHeader.objects.all()
+        serializer = SaleInvoiceSerializer(sale_invoices, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = SaleInvoiceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+
+class SaleInvoiceRetrieveUpdateDestroyViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return SaleInvoiceHeader.objects.get(pk=pk)
+        except SaleInvoiceHeader.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        sale_invoice = self.get_object(pk)
+        if not sale_invoice:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = SaleInvoiceSerializer(sale_invoice)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        sale_invoice = self.get_object(pk)
+        if not sale_invoice:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = SaleInvoiceSerializer(
+            sale_invoice, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk):
+    #     sale_invoice = self.get_object(pk)
+    #     if not sale_invoice:
+    #         return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+    #     sale_invoice.delete()
+    #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
+
+
+# --- ajax ---------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 
 
 @login_required
