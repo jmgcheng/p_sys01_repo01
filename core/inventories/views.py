@@ -19,6 +19,13 @@ from sales.models import SaleInvoiceHeader, SaleInvoiceDetail, SaleInvoiceStatus
 # from .mixins import AdminRequiredMixin
 from inventories.utils import get_quantity_purchasing_subquery, get_quantity_purchasing_receive_subquery, get_quantity_sale_releasing_subquery, get_quantity_sold_subquery, get_quantity_inventory_add_subquery, get_quantity_inventory_deduct_subquery
 from django.views import View
+from inventories.serializers import InventorySummarySerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status as drf_status
+from rest_framework import generics
 
 
 class InventoryAddCreateView(LoginRequiredMixin, CreateView):
@@ -223,6 +230,56 @@ class InventoryListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         return context
+
+
+# --- api ----------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+
+
+class InventoryListViewAPI(generics.ListAPIView):
+    serializer_class = InventorySummarySerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        search_value = self.request.query_params.get('search', '')
+
+        product_variations = ProductVariation.objects.all()
+
+        if search_value:
+            product_variations = product_variations.filter(
+                Q(code__icontains=search_value) |
+                Q(product__name__icontains=search_value) |
+                Q(name__icontains=search_value)
+            ).distinct()
+
+        product_variations = product_variations.annotate(
+            quantity_manual_add_annotated=Coalesce(
+                get_quantity_inventory_add_subquery(), 0),
+            quantity_manual_deduct_annotated=Coalesce(
+                get_quantity_inventory_deduct_subquery(), 0),
+            quantity_purchasing_annotated=Coalesce(
+                get_quantity_purchasing_subquery(), 0),
+            quantity_purchasing_receive_annotated=Coalesce(
+                get_quantity_purchasing_receive_subquery(), 0),
+            quantity_sale_releasing_annotated=Coalesce(
+                get_quantity_sale_releasing_subquery(), 0),
+            quantity_sold_annotated=Coalesce(get_quantity_sold_subquery(), 0),
+            quantity_on_hand_annotated=(
+                Coalesce(get_quantity_purchasing_receive_subquery(), 0)
+                + Coalesce(get_quantity_inventory_add_subquery(), 0)
+                - Coalesce(get_quantity_inventory_deduct_subquery(), 0)
+                - Coalesce(get_quantity_sold_subquery(), 0)
+            )
+        )
+
+        return product_variations
+
+
+# --- ajax ---------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 
 
 @login_required

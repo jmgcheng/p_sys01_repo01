@@ -3,6 +3,7 @@ from products.views import ProductListCreateViewApi, ProductRetrieveUpdateDestro
 from employees.views import EmployeeListCreateViewApi, EmployeeRetrieveUpdateDestroyViewApi
 from purchases.views import PurchaseRequestListCreateViewApi, PurchaseRequestRetrieveUpdateDestroyViewApi, PurchaseReceiveListCreateViewApi, PurchaseReceiveRetrieveUpdateDestroyViewApi
 from sales.views import SaleInvoiceListCreateViewApi, SaleInvoiceRetrieveUpdateDestroyViewApi, OfficialReceiptListCreateViewApi, OfficialReceiptRetrieveUpdateDestroyViewApi
+from inventories.views import InventoryListViewAPI
 from apis.views import GetCustomAuthToken
 from rest_framework.authtoken import views
 
@@ -35,6 +36,8 @@ urlpatterns = [
     path('official-receipts/', OfficialReceiptListCreateViewApi.as_view()),
     path('official-receipts/<int:pk>/',
          OfficialReceiptRetrieveUpdateDestroyViewApi.as_view()),
+
+    path('inventory-summary/', InventoryListViewAPI.as_view()),
 
     # use this one if you don't want a customize response
     # path('login/', views.obtain_auth_token),
