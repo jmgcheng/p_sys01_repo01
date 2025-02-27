@@ -104,3 +104,210 @@
 - update - 'hc system/notes.txt'
 - apply - permissions for main menu and class
 - resetup/clean - migration folders
+
+## milestone - nn - milestone check - 02272025
+
+- [ / ] - finalize - video flow - portfolio
+- [ / ] - record - video - portfolio
+- [ / ] - edit - video - portfolio
+- [ / ] - upload/check - video - portfolio
+- [ ] -
+- [ / ] - apply - django rest framework
+- [ / ] - success test on api list, create, detail, update for product, product variation, employee, purchase request, purchase receive, sales invoice, official receipt, inventory summary using postman
+- [ / ] - browsable api login at domain.com/api-auth/login/
+- [ / ] - login/logout browsable api
+
+## postman notes - 02272025
+
+```
+POST
+http://127.0.0.1:8000/api/login/
+body > form-data
+username ...
+password ...
+
+GET
+http://127.0.0.1:8000/api/products/
+Headers
+	Authorization 	Token a74...
+
+POST
+http://127.0.0.1:8000/api/products/
+Headers
+	Authorization 	Token a74...
+Body > raw > json
+{
+    "code": "P-000004",
+    "name": "API PRODUCT 01"
+}
+
+GET
+http://127.0.0.1:8000/api/products/4
+Headers
+	Authorization 	Token a74...
+
+PUT
+http://127.0.0.1:8000/api/products/4/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "code": "P-000004",
+    "name": "API PRODUCT 01"
+}
+
+GET
+http://127.0.0.1:8000/api/products/variations
+Headers
+	Authorization 	Token a74...
+
+POST
+http://127.0.0.1:8000/api/products/variations/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "code": "PV-API-002",
+    "product": 1,
+    "name": "API PRODUCT VARIATION 02",
+    "unit": 11,
+    "size": null
+}
+
+GET
+http://127.0.0.1:8000/api/products/variations/103
+Headers
+	Authorization 	Token a74...
+
+PUT
+http://127.0.0.1:8000/api/products/variations/103/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "code": "PV-API-002 UPDATED",
+    "product": 2,
+    "name": "API PRODUCT VARIATION 02 UPDATED",
+    "unit": 11,
+    "size": null
+}
+
+GET
+http://127.0.0.1:8000/api/employees/
+Headers
+	Authorization 	Token a74...
+
+POST
+http://127.0.0.1:8000/api/employees/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "company_id": "API-EMP-0001",
+    "gender": "MALE",
+    "status": 1,
+    "position": 1,
+    "position_level": 1,
+    "position_specialties": [1, 3],
+    "first_name": "Api First Name 01",
+    "last_name": "Api Last Name 01",
+    "email": "api-email01@domain.com"
+}
+
+GET
+http://127.0.0.1:8000/api/employees/101
+Headers
+	Authorization 	Token a74...
+
+PUT
+http://127.0.0.1:8000/api/employees/102/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "company_id": "API-EMP-0001",
+    "gender": "MALE",
+    "status": 1,
+    "position": 1,
+    "position_level": 1,
+    "position_specialties": [1, 3],
+    "first_name": "Api First Name 01",
+    "last_name": "Api Last Name 01",
+    "email": "api-email01@domain.com"
+}
+
+GET
+http://127.0.0.1:8000/api/purchase-requests/
+Headers
+	Authorization 	Token a74...
+
+POST
+http://127.0.0.1:8000/api/purchase-requests/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "code": "PR-API-002",
+    "date": "2024-02-27",
+    "requestor": 1,
+    "status": 1,
+    "detail": [
+        {
+            "product_variation": 11,
+            "quantity_request": 3
+        },
+        {
+            "product_variation": 13,
+            "quantity_request": 5
+        }
+    ]
+}
+
+GET
+http://127.0.0.1:8000/api/purchase-requests/303
+Headers
+	Authorization 	Token a74...
+
+PUT
+http://127.0.0.1:8000/api/purchase-requests/304/
+Headers
+	Authorization 	Token a74...
+body > raw > json
+{
+    "code": "PR-API-002",
+    "date": "2024-02-27",
+    "requestor": 1,
+    "status": 1,
+    "detail": [
+        {
+            "product_variation": 5,
+            "quantity_request": 6
+        },
+        {
+            "product_variation": 6,
+            "quantity_request": 5
+        }
+    ]
+}
+
+
+http://127.0.0.1:8000/api/purchase-receives/
+http://127.0.0.1:8000/api/purchase-receives/306/
+http://127.0.0.1:8000/api/sale-invoices/
+GET /api/sale-invoices/ → Returns the first 10 records
+GET /api/sale-invoices/?page=2 → Returns the next 10 records
+GET /api/sale-invoices/?page_size=20 → Returns 20 records per page
+GET /api/sale-invoices/?page_size=50&page=2 → Gets the second page with 50 records per page
+http://127.0.0.1:8000/api/sale-invoices/4696/
+http://127.0.0.1:8000/api/official-receipts/
+http://127.0.0.1:8000/api/official-receipts/4696/
+http://127.0.0.1:8000/api/inventory-summary/
+
+```
+
+## Upcoming Todos - 01 - 02272025
+
+- update - issue notes
+- update - 'hc system/notes.txt'
+- apply - permissions for main menu and class
+- resetup/clean - migration folders
