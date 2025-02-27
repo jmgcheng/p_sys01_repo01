@@ -79,6 +79,9 @@ INSTALLED_APPS = [
     'dbbackup',
 
     'rest_framework',
+
+    # adding this will enable Auth Token in django admin
+    'rest_framework.authtoken',
 ]
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
@@ -116,6 +119,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
+
+# # use this style below if you want to set globally so that you don't need to set anything for each view/class for your api
+# REST_FRAMEWORK = {
+#     # make authentication token style
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication'
+#     ],
+
+#     # this makes all view class require permissions
+#     # use the other one in the documentation for manual specific class permission
+#     # 'DEFAULT_PERMISSION_CLASSES': [
+#     # 	'rest_framework.permissions.IsAuthenticated'
+#     # ]
+# }
 
 
 # Database

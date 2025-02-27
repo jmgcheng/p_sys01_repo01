@@ -13,6 +13,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from commons.utils import should_be, parse_date
 from employees.models import Employee, EmployeeJob, EmployeeJobLevel, EmployeeJobSpecialty, EmployeeStatus
+from rest_framework.authtoken.models import Token
 
 
 # date_re = _lazy_re_compile(
@@ -279,6 +280,10 @@ def insert_excel_employees(df):
                                   for specialty in specialties.split(',')]
                 employee.position_specialties.add(
                     *EmployeeJobSpecialty.objects.filter(name__in=specialty_list))
+
+        # Manually create tokens for all new users for api
+        for user in users:
+            Token.objects.get_or_create(user=user)
 
     return True
 

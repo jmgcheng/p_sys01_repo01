@@ -20,9 +20,11 @@ from employees.tasks import import_employees_task
 from celery.result import AsyncResult
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from employees.serializers import EmployeeSerializer
+from rest_framework import status as drf_status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status as drf_status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 class EmployeeListView(LoginRequiredMixin, ListView):
@@ -75,6 +77,9 @@ class EmployeeUpdateView(LoginRequiredMixin, UpdateView):
 # ------------------------------------------------------------------------------------------------------------------------
 
 class EmployeeListCreateViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         employees = Employee.objects.all()
         serializer = EmployeeSerializer(employees, many=True)
@@ -89,6 +94,9 @@ class EmployeeListCreateViewApi(APIView):
 
 
 class EmployeeRetrieveUpdateDestroyViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         return get_object_or_404(Employee, pk=pk)
 
