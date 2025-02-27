@@ -20,6 +20,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as drf_status
 from rest_framework import generics
+from rest_framework.generics import ListCreateAPIView
+from commons.utils import ApiCustomPagination
 
 
 class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
@@ -261,21 +263,26 @@ class PurchaseReceiveListView(LoginRequiredMixin, ListView):
 # ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
 
-class PurchaseRequestListCreateViewApi(APIView):
-    # authentication_classes = [TokenAuthentication]
+# APIView does not support pagination as to why we need use ListCreateAPIView
+# class PurchaseRequestListCreateViewApi(APIView):
+#     # authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     def get(self, request):
+#         purchase_requests = PurchaseRequestHeader.objects.all()
+#         serializer = PurchaseRequestSerializer(purchase_requests, many=True)
+#         return Response(serializer.data)
+#     def post(self, request):
+#         serializer = PurchaseRequestSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+class PurchaseRequestListCreateViewApi(ListCreateAPIView):
+    queryset = PurchaseRequestHeader.objects.all()
+    serializer_class = PurchaseRequestSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        purchase_requests = PurchaseRequestHeader.objects.all()
-        serializer = PurchaseRequestSerializer(purchase_requests, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = PurchaseRequestSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+    pagination_class = ApiCustomPagination
 
 
 class PurchaseRequestRetrieveUpdateDestroyViewApi(APIView):
@@ -316,22 +323,27 @@ class PurchaseRequestRetrieveUpdateDestroyViewApi(APIView):
     #     purchase_request.delete()
     #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
 
+# APIView does not support pagination as to why we need use ListCreateAPIView
+# class PurchaseReceiveListCreateViewApi(APIView):
+#     # authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     def get(self, request):
+#         purchase_receives = PurchaseReceiveHeader.objects.all()
+#         serializer = PurchaseReceiveSerializer(purchase_receives, many=True)
+#         return Response(serializer.data)
+#     def post(self, request):
+#         serializer = PurchaseReceiveSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
 
-class PurchaseReceiveListCreateViewApi(APIView):
-    # authentication_classes = [TokenAuthentication]
+
+class PurchaseReceiveListCreateViewApi(ListCreateAPIView):
+    queryset = PurchaseReceiveHeader.objects.all()
+    serializer_class = PurchaseReceiveSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        purchase_receives = PurchaseReceiveHeader.objects.all()
-        serializer = PurchaseReceiveSerializer(purchase_receives, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = PurchaseReceiveSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+    pagination_class = ApiCustomPagination
 
 
 class PurchaseReceiveRetrieveUpdateDestroyViewApi(APIView):

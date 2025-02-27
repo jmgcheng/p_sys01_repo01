@@ -19,7 +19,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListCreateAPIView
 from rest_framework import status as drf_status
+from commons.utils import ApiCustomPagination
 
 
 class SaleInvoiceCreateView(LoginRequiredMixin, CreateView):
@@ -282,22 +284,26 @@ class OfficialReceiptListView(LoginRequiredMixin, ListView):
 # ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
 
+# APIView does not support pagination as to why we need use ListCreateAPIView
+# class SaleInvoiceListCreateViewApi(APIView):
+#     # authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     def get(self, request):
+#         sale_invoices = SaleInvoiceHeader.objects.all()
+#         serializer = SaleInvoiceSerializer(sale_invoices, many=True)
+#         return Response(serializer.data)
+#     def post(self, request):
+#         serializer = SaleInvoiceSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
 
-class SaleInvoiceListCreateViewApi(APIView):
-    # authentication_classes = [TokenAuthentication]
+class SaleInvoiceListCreateViewApi(ListCreateAPIView):
+    queryset = SaleInvoiceHeader.objects.all()
+    serializer_class = SaleInvoiceSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        sale_invoices = SaleInvoiceHeader.objects.all()
-        serializer = SaleInvoiceSerializer(sale_invoices, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = SaleInvoiceSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+    pagination_class = ApiCustomPagination
 
 
 class SaleInvoiceRetrieveUpdateDestroyViewApi(APIView):
@@ -338,22 +344,27 @@ class SaleInvoiceRetrieveUpdateDestroyViewApi(APIView):
     #     sale_invoice.delete()
     #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
 
+# APIView does not support pagination as to why we need use ListCreateAPIView
+# class OfficialReceiptListCreateViewApi(APIView):
+#     # authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     def get(self, request):
+#         official_receipts = OfficialReceiptHeader.objects.all()
+#         serializer = OfficialReceiptSerializer(official_receipts, many=True)
+#         return Response(serializer.data)
+#     def post(self, request):
+#         serializer = OfficialReceiptSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
 
-class OfficialReceiptListCreateViewApi(APIView):
-    # authentication_classes = [TokenAuthentication]
+
+class OfficialReceiptListCreateViewApi(ListCreateAPIView):
+    queryset = OfficialReceiptHeader.objects.all()
+    serializer_class = OfficialReceiptSerializer
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        official_receipts = OfficialReceiptHeader.objects.all()
-        serializer = OfficialReceiptSerializer(official_receipts, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = OfficialReceiptSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+    pagination_class = ApiCustomPagination
 
 
 class OfficialReceiptRetrieveUpdateDestroyViewApi(APIView):

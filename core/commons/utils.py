@@ -3,6 +3,7 @@ import datetime
 from django.utils.regex_helper import _lazy_re_compile
 from django.db.models import Q
 from django.core.management.base import CommandError
+from rest_framework.pagination import PageNumberPagination
 
 
 date_re = _lazy_re_compile(
@@ -49,3 +50,9 @@ def parse_date(date_str):
         if match := date_re.match(date_str):
             kw = {k: int(v) for k, v in match.groupdict().items()}
             return datetime.date(**kw)
+
+
+class ApiCustomPagination(PageNumberPagination):
+    page_size = 10  # Default page size
+    page_size_query_param = 'page_size'  # Allow clients to set page size
+    max_page_size = 100  # Limit maximum results per page
