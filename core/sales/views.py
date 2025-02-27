@@ -14,7 +14,7 @@ from sales.models import SaleInvoiceCategory, SaleInvoiceStatus, SaleInvoiceHead
 from sales.forms import SaleInvoiceHeaderForm, SaleInvoiceDetailForm, SaleInvoiceInlineFormSet, SaleInvoiceInlineFormSetNoExtra, OfficialReceiptHeaderForm, OfficialReceiptDetailForm, OfficialReceiptInlineFormSet, OfficialReceiptInlineFormSetNoExtra
 from django.views import View
 from xhtml2pdf import pisa
-from sales.serializers import SaleInvoiceStatusSerializer, SaleInvoiceDetailSerializer, SaleInvoiceSerializer
+from sales.serializers import SaleInvoiceStatusSerializer, SaleInvoiceDetailSerializer, SaleInvoiceSerializer, OfficialReceiptStatusSerializer, OfficialReceiptDetailSerializer, OfficialReceiptSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
@@ -336,6 +336,62 @@ class SaleInvoiceRetrieveUpdateDestroyViewApi(APIView):
     #     if not sale_invoice:
     #         return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
     #     sale_invoice.delete()
+    #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
+
+
+class OfficialReceiptListCreateViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        official_receipts = OfficialReceiptHeader.objects.all()
+        serializer = OfficialReceiptSerializer(official_receipts, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = OfficialReceiptSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+
+class OfficialReceiptRetrieveUpdateDestroyViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return OfficialReceiptHeader.objects.get(pk=pk)
+        except OfficialReceiptHeader.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        official_receipt = self.get_object(pk)
+        if not official_receipt:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = OfficialReceiptSerializer(official_receipt)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        official_receipt = self.get_object(pk)
+        if not official_receipt:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = OfficialReceiptSerializer(
+            official_receipt, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk):
+    #     official_receipt = self.get_object(pk)
+    #     if not official_receipt:
+    #         return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+    #     official_receipt.delete()
     #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
 
 

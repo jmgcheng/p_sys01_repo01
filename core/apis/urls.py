@@ -2,7 +2,7 @@ from django.urls import path
 from products.views import ProductListCreateViewApi, ProductRetrieveUpdateDestroyViewApi, ProductVariationListCreateViewApi, ProductVariationRetrieveUpdateDestroyViewApi
 from employees.views import EmployeeListCreateViewApi, EmployeeRetrieveUpdateDestroyViewApi
 from purchases.views import PurchaseRequestListCreateViewApi, PurchaseRequestRetrieveUpdateDestroyViewApi, PurchaseReceiveListCreateViewApi, PurchaseReceiveRetrieveUpdateDestroyViewApi
-from sales.views import SaleInvoiceListCreateViewApi, SaleInvoiceRetrieveUpdateDestroyViewApi
+from sales.views import SaleInvoiceListCreateViewApi, SaleInvoiceRetrieveUpdateDestroyViewApi, OfficialReceiptListCreateViewApi, OfficialReceiptRetrieveUpdateDestroyViewApi
 from apis.views import GetCustomAuthToken
 from rest_framework.authtoken import views
 
@@ -31,6 +31,10 @@ urlpatterns = [
     path('sale-invoices/', SaleInvoiceListCreateViewApi.as_view()),
     path('sale-invoices/<int:pk>/',
          SaleInvoiceRetrieveUpdateDestroyViewApi.as_view()),
+
+    path('official-receipts/', OfficialReceiptListCreateViewApi.as_view()),
+    path('official-receipts/<int:pk>/',
+         OfficialReceiptRetrieveUpdateDestroyViewApi.as_view()),
 
     # use this one if you don't want a customize response
     # path('login/', views.obtain_auth_token),
