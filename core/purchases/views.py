@@ -13,6 +13,13 @@ from purchases.models import PurchaseRequestHeader, PurchaseRequestDetail, Purch
 from purchases.forms import PurchaseRequestHeaderForm, PurchaseRequestDetailForm, PurchaseRequestModelFormSet, PurchaseRequestInlineFormSet, PurchaseRequestInlineFormSetNoExtra, PurchaseReceiveHeaderForm, PurchaseReceiveDetailForm, PurchaseReceiveInlineFormSet, PurchaseReceiveInlineFormSetNoExtra
 # from .mixins import AdminRequiredMixin
 from django.views import View
+from purchases.serializers import PurchaseRequestStatusSerializer, PurchaseRequestDetailSerializer, PurchaseRequestSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status as drf_status
+from rest_framework import generics
 
 
 class PurchaseRequestCreateView(LoginRequiredMixin, CreateView):
@@ -248,6 +255,71 @@ class PurchaseReceiveDetailView(LoginRequiredMixin, DetailView):
 class PurchaseReceiveListView(LoginRequiredMixin, ListView):
     model = PurchaseReceiveHeader
     template_name = 'purchases/purchase_receive_list.html'
+
+
+# --- api ----------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+
+class PurchaseRequestListCreateViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        purchase_requests = PurchaseRequestHeader.objects.all()
+        serializer = PurchaseRequestSerializer(purchase_requests, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = PurchaseRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=drf_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+
+class PurchaseRequestRetrieveUpdateDestroyViewApi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return PurchaseRequestHeader.objects.get(pk=pk)
+        except PurchaseRequestHeader.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        purchase_request = self.get_object(pk)
+        if not purchase_request:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = PurchaseRequestSerializer(purchase_request)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        purchase_request = self.get_object(pk)
+        if not purchase_request:
+            return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+
+        serializer = PurchaseRequestSerializer(
+            purchase_request, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk):
+    #     purchase_request = self.get_object(pk)
+    #     if not purchase_request:
+    #         return Response({'error': 'Not found'}, status=drf_status.HTTP_404_NOT_FOUND)
+    #     purchase_request.delete()
+    #     return Response(status=drf_status.HTTP_204_NO_CONTENT)
+
+
+# --- ajax ---------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 
 
 @login_required
