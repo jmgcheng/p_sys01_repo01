@@ -239,7 +239,7 @@ class InventoryListView(LoginRequiredMixin, ListView):
 
 class InventoryListViewAPI(generics.ListAPIView):
     serializer_class = InventorySummarySerializer
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
